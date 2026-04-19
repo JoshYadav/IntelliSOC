@@ -1,0 +1,12 @@
+node_modules
+.env
+dist
+build
+.prisma
+
+# Ignore uploaded log files
+uploads/
+backend/uploads/
+*.log
+!sample.log
+!mock_sample.log

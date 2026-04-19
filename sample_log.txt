@@ -1,0 +1,20 @@
+# Normal successful logins
+Mar 22 10:00:01 server sshd[3001]: Accepted password for john from 192.168.1.10 port 22 ssh2
+Mar 22 10:05:22 server sshd[3002]: Accepted password for sarah from 192.168.1.11 port 22 ssh2
+
+# Brute force attack simulation
+Mar 22 10:15:01 server sshd[3100]: Failed password for admin from 203.0.113.50 port 22 ssh2
+Mar 22 10:15:03 server sshd[3101]: Failed password for admin from 203.0.113.50 port 22 ssh2
+Mar 22 10:15:05 server sshd[3102]: Failed password for admin from 203.0.113.50 port 22 ssh2
+Mar 22 10:15:07 server sshd[3103]: Failed password for admin from 203.0.113.50 port 22 ssh2
+Mar 22 10:15:09 server sshd[3104]: Failed password for admin from 203.0.113.50 port 22 ssh2
+Mar 22 10:15:11 server sshd[3105]: Failed password for admin from 203.0.113.50 port 22 ssh2
+
+# Account compromise: attacker eventually succeeds
+Mar 22 10:15:15 server sshd[3106]: Accepted password for admin from 203.0.113.50 port 22 ssh2
+
+# Suspicious activity: Multiple users targeted from a single bad actor IP
+Mar 22 10:20:01 server sshd[3200]: Failed password for root from 185.20.10.99 port 22 ssh2
+Mar 22 10:20:02 server sshd[3201]: Failed password for deploy from 185.20.10.99 port 22 ssh2
+Mar 22 10:20:03 server sshd[3202]: Failed password for system from 185.20.10.99 port 22 ssh2
+Mar 22 10:20:04 server sshd[3203]: Failed password for test from 185.20.10.99 port 22 ssh2

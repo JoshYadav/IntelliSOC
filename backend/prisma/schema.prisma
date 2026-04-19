@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  fileName  String
+  createdAt DateTime @default(now())
+  logs      Log[]
+  alerts    Alert[]
+}
+
+model Log {
+  id         Int      @id @default(autoincrement())
+  sessionId  String
+  rawLog     String
+  parsedJson String?
+  timestamp  DateTime?
+  session    Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+}
+
+model Alert {
+  id          Int      @id @default(autoincrement())
+  sessionId   String
+  type        String   // BRUTE_FORCE | MULTIPLE_USERS | ACCOUNT_COMPROMISE
+  ip          String
+  user        String?
+  severity    String   // LOW | MEDIUM | HIGH | CRITICAL
+  riskScore   Int
+  mitreTactic String?
+  explanation String?
+  reputation  String?  // UNKNOWN | SUSPICIOUS | MALICIOUS
+  count       Int      @default(1)
+  timestamp   DateTime
+  session     Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@index([type])
+  @@index([severity])
+}

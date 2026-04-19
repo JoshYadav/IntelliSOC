@@ -1,0 +1,37 @@
+# Normal traffic
+Mar 21 08:00:12 server sshd[2001]: Accepted password for alice from 10.10.10.50 port 22 ssh2
+Mar 21 08:05:44 server sshd[2003]: Accepted password for bob from 10.10.10.51 port 22 ssh2
+
+# Brute force attack against 'root' from 198.51.100.22
+Mar 21 08:10:01 server sshd[2100]: Failed password for root from 198.51.100.22 port 22 ssh2
+Mar 21 08:10:03 server sshd[2101]: Failed password for root from 198.51.100.22 port 22 ssh2
+Mar 21 08:10:05 server sshd[2102]: Failed password for root from 198.51.100.22 port 22 ssh2
+Mar 21 08:10:07 server sshd[2103]: Failed password for root from 198.51.100.22 port 22 ssh2
+Mar 21 08:10:09 server sshd[2104]: Failed password for root from 198.51.100.22 port 22 ssh2
+Mar 21 08:10:11 server sshd[2105]: Failed password for root from 198.51.100.22 port 22 ssh2
+Mar 21 08:10:13 server sshd[2106]: Failed password for root from 198.51.100.22 port 22 ssh2
+
+# Account Compromise: Same adversary finally succeeds
+Mar 21 08:10:15 server sshd[2107]: Accepted password for root from 198.51.100.22 port 22 ssh2
+
+# Normal traffic
+Mar 21 08:12:00 server sshd[2201]: Accepted password for deploy from 10.10.10.100 port 22 ssh2
+
+# Multiple Users targeted from a single bad actor IP (Credential Stuffing from 203.0.113.88)
+Mar 21 08:15:01 server sshd[2300]: Failed password for admin from 203.0.113.88 port 22 ssh2
+Mar 21 08:15:03 server sshd[2301]: Failed password for administrator from 203.0.113.88 port 22 ssh2
+Mar 21 08:15:05 server sshd[2302]: Failed password for user from 203.0.113.88 port 22 ssh2
+Mar 21 08:15:07 server sshd[2303]: Failed password for test from 203.0.113.88 port 22 ssh2
+Mar 21 08:15:09 server sshd[2304]: Failed password for guest from 203.0.113.88 port 22 ssh2
+
+# Another Account Compromise (successful breach of 'alice' account)
+Mar 21 08:20:01 server sshd[2400]: Failed password for alice from 185.20.10.99 port 22 ssh2
+Mar 21 08:20:02 server sshd[2401]: Failed password for alice from 185.20.10.99 port 22 ssh2
+Mar 21 08:20:03 server sshd[2402]: Failed password for alice from 185.20.10.99 port 22 ssh2
+Mar 21 08:20:04 server sshd[2403]: Failed password for alice from 185.20.10.99 port 22 ssh2
+Mar 21 08:20:05 server sshd[2404]: Failed password for alice from 185.20.10.99 port 22 ssh2
+Mar 21 08:20:06 server sshd[2405]: Failed password for alice from 185.20.10.99 port 22 ssh2
+Mar 21 08:20:08 server sshd[2406]: Accepted password for alice from 185.20.10.99 port 22 ssh2
+
+# Normal traffic
+Mar 21 08:30:00 server sshd[2500]: Accepted password for charlie from 10.10.10.52 port 22 ssh2
