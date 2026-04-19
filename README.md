@@ -1,106 +1,207 @@
-🚀 IntelliSOC – AI-Powered Cyber Threat Detection System (Mini SIEM)
-IntelliSOC is a full-stack Security Information and Event Management (SIEM) system designed to analyze system logs, detect cyber threats, correlate events, and present actionable insights through a modern, interactive dashboard. This project was developed as a full-stack application by me, with cybersecurity domain support and contributions from my teammates Vansh Tiwari and Josh Yadav.
+# 🚀 IntelliSOC – AI-Powered Cyber Threat Detection System (Mini SIEM)
 
-⚠️ Problem
+IntelliSOC is a full-stack **Security Information and Event Management (SIEM)** system that analyzes system logs, detects cyber threats, correlates events, and presents actionable insights through an interactive dashboard.
+
+This project simulates real-world SOC workflows used in modern cybersecurity environments.
+
+---
+
+## ⚠️ Problem
+
 Modern systems generate massive volumes of logs, but analyzing them manually is:
 
-⏳ Time-consuming
-❌ Error-prone
-🚫 Inefficient for real-time threat detection
-Security teams need automated systems to quickly identify threats and reduce manual workload.
+* ⏳ Time-consuming
+* ❌ Error-prone
+* 🚫 Inefficient for real-time threat detection
 
-💡 Solution
-IntelliSOC automates log analysis by:
+Security teams require automated systems to efficiently detect and respond to threats.
 
-🔍 Detecting cyber attacks instantly
-🔗 Correlating multiple events to uncover real threats
-🧠 Providing clear, explainable insights
-It simulates a real-world SIEM system used in enterprise cybersecurity environments.
+---
 
-🎬 Demo Flow
-Upload a .log file
-System parses and structures logs
-Detects threats like brute force & account compromise
-Correlates events and assigns risk scores
-Displays results in an interactive dashboard
-Export results as CSV for further analysis
-💡 Key Differentiators
-🔍 Explainable Alerts – clear reasoning behind every detection
-⏱️ Time-Based Behavioral Analysis
-📊 Session-Based Log Isolation
-⚡ Lightweight SIEM Simulation (fast & deployable)
-🚀 Features
-File Ingestion: Upload .log files directly
+## 💡 Solution
 
-Parsing Engine: Converts raw logs → structured JSON
+IntelliSOC solves this by:
 
-Threat Detection Engine:
+* 🔍 Automatically detecting cyber attacks
+* 🔗 Correlating multiple events to uncover real threats
+* 🧠 Providing explainable, analyst-friendly insights
 
-Brute Force Attack detection
-Suspicious multi-user IP activity
-Correlation Engine: Detects account compromise patterns
+It acts as a **lightweight SIEM system** for practical cybersecurity analysis.
 
-Time-Based Logic & Aggregation: Focuses on recent events and avoids duplicate alerts
+---
 
-Enrichment Layer:
+## 🎬 Demo Flow
 
-Risk scoring (0–100)
-MITRE ATT&CK mapping
-Human-readable explanations
-Session Management: Isolates each upload for clean analysis
+1. Upload a `.log` file
+2. Logs are parsed into structured data
+3. Threats are detected (e.g., brute force, suspicious activity)
+4. Events are correlated to identify complex attacks
+5. Risk scores and MITRE mapping are applied
+6. Results are visualized on a dashboard
+7. Export results as CSV
 
-Export Reports: Download results as CSV
+---
 
-🏗️ Architecture
+## 🚀 Key Differentiators
 
-🛠️ Tech Stack
-Frontend
-React 19 + TypeScript + Vite
-Tailwind CSS
-Recharts
-Lucide React
-Backend
-Node.js + Express + TypeScript
-Multer (file upload)
-Prisma ORM
-Database
-PostgreSQL
-🚀 Getting Started
-Prerequisites
-Node.js (v18+)
-PostgreSQL
-1️⃣ Database Setup
+* 🔍 **Explainable Alerts** – Clear reasoning behind each detection
+* ⏱️ **Time-Based Behavioral Analysis** – Detects anomalies over time
+* 📊 **Session-Based Isolation** – Clean, independent log analysis
+* ⚡ **Lightweight & Fast** – Deployable mini-SIEM system
+
+---
+
+## 🚀 Features
+
+### 🔹 File Ingestion
+
+* Upload `.log` files directly
+
+### 🔹 Parsing Engine
+
+* Converts raw logs → structured JSON
+
+### 🔹 Threat Detection Engine
+
+* Brute Force Attack detection
+* Suspicious multi-user IP detection
+
+### 🔹 Correlation Engine
+
+* Detects account compromise patterns
+
+### 🔹 Enrichment Layer
+
+* Risk scoring (0–100)
+* MITRE ATT&CK mapping
+* Human-readable explanations
+
+### 🔹 Session Management
+
+* Isolates each upload for clean analysis
+
+### 🔹 Export Reports
+
+* Download results as CSV
+
+---
+
+## 🏗️ Architecture
+
+```mermaid
+graph TD;
+    A[User Uploads .log] -->|Frontend API Call| B(Backend API)
+    B --> C{Parsing Engine}
+    C -->|Structured JSON| D[Detection Engine]
+    D --> E[Correlation Engine]
+    E --> F[Enrichment Layer]
+    F -->|Risk Scoring & MITRE| G[(PostgreSQL DB)]
+    G -->|Alerts & Analytics API| H[Frontend Dashboard]
+```
+
+---
+
+## 🛠️ Tech Stack
+
+### 🔹 Frontend
+
+* React 19 + TypeScript + Vite
+* Tailwind CSS
+* Recharts
+* Lucide React
+
+### 🔹 Backend
+
+* Node.js + Express + TypeScript
+* Multer (file upload)
+* Prisma ORM
+
+### 🔹 Database
+
+* PostgreSQL
+
+---
+
+## 🚀 Getting Started
+
+### 📦 Prerequisites
+
+* Node.js (v18+)
+* PostgreSQL
+
+---
+
+### 1️⃣ Database Setup
+
+```bash
 cd backend
 echo "DATABASE_URL=postgresql://USER:PASSWORD@localhost:5432/intellisoc" > .env
-2️⃣ Backend Setup
+```
+
+---
+
+### 2️⃣ Backend Setup
+
+```bash
 cd backend
 npm install
 npx prisma generate
 npx prisma migrate dev --name init
 npm run dev
-3️⃣ Frontend Setup
+```
+
+---
+
+### 3️⃣ Frontend Setup
+
+```bash
 cd frontend
 npm install
 npm run dev
-🌍 Real-World Impact
+```
+
+---
+
+## 🌍 Real-World Impact
+
 IntelliSOC helps security teams:
 
-⚡ Detect attacks faster
-🧠 Understand threat patterns
-🛡️ Take immediate action
-This project demonstrates how real-world SIEM tools operate in modern cybersecurity environments.
+* ⚡ Detect attacks faster
+* 🧠 Understand threat patterns
+* 🛡️ Take immediate action
 
-🚀 Future Enhancements
-Real-time log streaming (WebSockets)
-AI/ML-based anomaly detection
-Integration with threat intelligence APIs
-Role-based authentication
-🤝 Contributing
+This project demonstrates how modern SIEM tools operate in real-world cybersecurity environments.
+
+---
+
+## 🚀 Future Enhancements
+
+* Real-time log streaming (WebSockets)
+* AI/ML-based anomaly detection
+* Integration with threat intelligence APIs
+* Role-based authentication
+
+---
+
+## 🤝 Contributing
+
 Contributions are welcome!
 
-Fork the repo
-Create a feature branch
-Commit your changes
-Push and open a PR
-📝 License
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push and open a pull request
+
+---
+
+## 👨‍💻 Made with ❤️ by
+
+* **Josh Yadav** – Cybersecurity & Detection Logic
+* **Vansh Tiwari** – Cybersecurity & Threat Analysis
+* **Keshav** – Full Stack Development
+
+---
+
+## 📝 License
+
 This project is licensed under the MIT License.
