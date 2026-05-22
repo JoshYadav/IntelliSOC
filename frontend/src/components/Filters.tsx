@@ -8,7 +8,19 @@ interface FiltersProps {
 }
 
 const severities = ['ALL', 'CRITICAL', 'HIGH', 'MEDIUM', 'LOW'];
-const attackTypes = ['ALL', 'BRUTE_FORCE', 'MULTIPLE_USERS', 'ACCOUNT_COMPROMISE'];
+const attackTypes = [
+  'ALL',
+  // SSH / Linux
+  'BRUTE_FORCE', 'MULTIPLE_USERS', 'ACCOUNT_COMPROMISE', 'SUDO_ABUSE',
+  // HTTP
+  'HTTP_BRUTE_FORCE', 'DIRECTORY_SCAN',
+  // Windows
+  'WINDOWS_BRUTE_FORCE', 'PERSISTENCE_DETECTED', 'LATERAL_MOVEMENT',
+  // Sysmon
+  'MALWARE_PROCESS_CHAIN', 'SUSPICIOUS_NETWORK',
+  // Firewall
+  'PORT_SCAN',
+];
 
 const selectStyle: React.CSSProperties = {
   padding: '0.6rem 1rem',

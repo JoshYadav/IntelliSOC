@@ -1,56 +1,107 @@
-import { parseLogFile } from './parserService';
+import { parseLogFile, detectFormat } from './parserService';
 import { runDetection } from './detectionService';
+import { runHttpDetection } from './httpDetectionService';
+import { runWindowsDetection } from './windowsDetectionService';
+import { runSysmonDetection } from './sysmonDetectionService';
+import { runFirewallDetection } from './firewallDetectionService';
 import { runCorrelation } from './correlationService';
 import { enrichAlerts } from './enrichmentService';
 import { aggregateAlerts } from './aggregationService';
 import prisma from '../utils/prisma';
-import { AnalyticsData } from '../utils/types';
+import { AnalyticsData, LogFormat, DetectionAlert } from '../utils/types';
 
 /**
  * Main processing pipeline:
- * Upload → Parse → Detect → Correlate → Enrich → Aggregate → Store
+ * Upload → Detect Format → Parse → Detect → Correlate → Enrich → Aggregate → Store
  */
 export async function processLogFile(fileName: string, fileContent: string) {
-  // 1. Create a new session
+  // 1. Auto-detect log format
+  const logFormat: LogFormat = detectFormat(fileContent);
+  console.log(`[Pipeline] Auto-detected format: ${logFormat} for file: ${fileName}`);
+
+  // 2. Create a new session (with detected format)
   const session = await prisma.session.create({
-    data: { fileName },
+    data: { fileName, logFormat },
   });
 
-  // 2. Parse log file
-  const parsedLogs = parseLogFile(fileContent);
+  // 3. Parse log file with detected format
+  const parsedLogs = parseLogFile(fileContent, logFormat);
 
-  // 3. Store parsed logs in DB
+  // 4. Store parsed logs in DB
   if (parsedLogs.length > 0) {
     await prisma.log.createMany({
       data: parsedLogs.map((log) => ({
         sessionId: session.id,
         rawLog: log.rawLog,
         parsedJson: JSON.stringify({
+          format: log.format,
           eventType: log.eventType,
           user: log.user,
           ip: log.ip,
+          // HTTP fields
+          method: log.method,
+          url: log.url,
+          statusCode: log.statusCode,
+          // Windows fields
+          eventId: log.eventId,
+          computer: log.computer,
+          logonType: log.logonType,
+          // Sysmon fields
+          image: log.image,
+          commandLine: log.commandLine,
+          parentImage: log.parentImage,
+          destinationIp: log.destinationIp,
+          // Firewall fields
+          srcIp: log.srcIp,
+          dstIp: log.dstIp,
+          dstPort: log.dstPort,
+          action: log.action,
+          protocol: log.protocol,
         }),
         timestamp: log.timestamp,
       })),
     });
   }
 
-  // 4. Run detection rules
-  const detectionAlerts = runDetection(parsedLogs);
+  // 5. Run format-specific detection rules
+  let detectionAlerts: DetectionAlert[] = [];
 
-  // 5. Run correlation engine
+  switch (logFormat) {
+    case 'SSH_AUTH':
+      detectionAlerts = runDetection(parsedLogs);
+      break;
+    case 'APACHE':
+    case 'NGINX':
+      detectionAlerts = runHttpDetection(parsedLogs);
+      break;
+    case 'WINDOWS_EVENT':
+      detectionAlerts = runWindowsDetection(parsedLogs);
+      break;
+    case 'SYSMON':
+      detectionAlerts = runSysmonDetection(parsedLogs);
+      break;
+    case 'FIREWALL':
+      detectionAlerts = runFirewallDetection(parsedLogs);
+      break;
+    default:
+      // Unknown format — try SSH detection as best-effort
+      detectionAlerts = runDetection(parsedLogs);
+      break;
+  }
+
+  // 6. Run correlation engine (works across all formats with LOGIN_FAILED/SUCCESS)
   const correlationAlerts = runCorrelation(parsedLogs);
 
-  // 6. Combine all alerts
+  // 7. Combine all alerts
   const allAlerts = [...detectionAlerts, ...correlationAlerts];
 
-  // 7. Aggregate duplicates
+  // 8. Aggregate duplicates
   const aggregatedAlerts = aggregateAlerts(allAlerts);
 
-  // 8. Enrich with MITRE, explanations, reputation
-  const enrichedAlerts = enrichAlerts(aggregatedAlerts);
+  // 9. Enrich with MITRE, explanations, and AbuseIPDB reputation
+  const enrichedAlerts = await enrichAlerts(aggregatedAlerts);
 
-  // 9. Store alerts in DB
+  // 10. Store alerts in DB
   if (enrichedAlerts.length > 0) {
     await prisma.alert.createMany({
       data: enrichedAlerts.map((alert) => ({
@@ -65,12 +116,17 @@ export async function processLogFile(fileName: string, fileContent: string) {
         reputation: alert.reputation || null,
         count: alert.count,
         timestamp: alert.timestamp,
+        // AbuseIPDB enrichment
+        abuseScore: alert.abuseScore ?? null,
+        country: alert.country ?? null,
+        isp: alert.isp ?? null,
       })),
     });
   }
 
   return {
     sessionId: session.id,
+    logFormat,
     logsProcessed: parsedLogs.length,
     alertsGenerated: enrichedAlerts.length,
   };

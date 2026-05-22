@@ -1,8 +1,18 @@
 // Shared frontend types
 
+export type LogFormat =
+  | 'SSH_AUTH'
+  | 'APACHE'
+  | 'NGINX'
+  | 'WINDOWS_EVENT'
+  | 'SYSMON'
+  | 'FIREWALL'
+  | 'UNKNOWN';
+
 export interface Session {
   id: string;
   fileName: string;
+  logFormat: LogFormat;
   createdAt: string;
   _count?: {
     logs: number;
@@ -23,11 +33,16 @@ export interface Alert {
   reputation: string | null;
   count: number;
   timestamp: string;
+  // AbuseIPDB enrichment
+  abuseScore: number | null;
+  country: string | null;
+  isp: string | null;
 }
 
 export interface UploadResponse {
   message: string;
   sessionId: string;
+  logFormat: LogFormat;
   logsProcessed: number;
   alertsGenerated: number;
 }

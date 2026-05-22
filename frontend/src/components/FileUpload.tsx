@@ -2,7 +2,7 @@ import { useState, useRef, useCallback } from 'react';
 import { UploadCloud, Lock, Loader2, AlertCircle } from 'lucide-react';
 
 interface FileUploadProps {
-  onUploadSuccess: (sessionId: string, logsProcessed: number, alertsGenerated: number) => void;
+  onUploadSuccess: (sessionId: string, logsProcessed: number, alertsGenerated: number, logFormat: string) => void;
 }
 
 export default function FileUpload({ onUploadSuccess }: FileUploadProps) {
@@ -14,8 +14,8 @@ export default function FileUpload({ onUploadSuccess }: FileUploadProps) {
 
   const handleFile = useCallback(async (file: File) => {
     const ext = file.name.split('.').pop()?.toLowerCase();
-    if (ext !== 'log' && ext !== 'txt') {
-      setError('Only .log and .txt files are supported');
+    if (!['log', 'txt', 'xml', 'csv', 'evtx'].includes(ext || '')) {
+      setError('Supported formats: .log, .txt, .xml, .csv, .evtx');
       return;
     }
 
@@ -49,7 +49,7 @@ export default function FileUpload({ onUploadSuccess }: FileUploadProps) {
       });
 
       setUploadProgress(100);
-      onUploadSuccess(result.sessionId, result.logsProcessed, result.alertsGenerated);
+      onUploadSuccess(result.sessionId, result.logsProcessed, result.alertsGenerated, result.logFormat ?? 'UNKNOWN');
     } catch (err: any) {
       setError(err.message || 'Failed to upload file');
     } finally {
@@ -152,7 +152,7 @@ export default function FileUpload({ onUploadSuccess }: FileUploadProps) {
         }}>
           {isUploading
             ? 'Analyzing for cyber threats...'
-            : 'Drag & drop a .log or .txt file, or click to browse'
+            : 'Drag & drop a log file (.log, .txt, .xml, .csv) or click to browse'
           }
         </p>
 
@@ -177,7 +177,7 @@ export default function FileUpload({ onUploadSuccess }: FileUploadProps) {
         <input
           ref={fileInputRef}
           type="file"
-          accept=".log,.txt"
+          accept=".log,.txt,.xml,.csv,.evtx"
           onChange={(e) => {
             const file = e.target.files?.[0];
             if (file) handleFile(file);

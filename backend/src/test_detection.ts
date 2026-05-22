@@ -1,10 +1,12 @@
 import fs from 'fs';
-import { parseLogFile } from './services/parserService';
+import { parseLogFile, detectFormat } from './services/parserService';
 import { runDetection } from './services/detectionService';
 import { runCorrelation } from './services/correlationService';
 
 const fileContent = fs.readFileSync('../sample_log.txt', 'utf8');
-const parsedLogs = parseLogFile(fileContent);
+const format = detectFormat(fileContent);
+console.log(`Detected format: ${format}`);
+const parsedLogs = parseLogFile(fileContent, format);
 console.log(`Parsed ${parsedLogs.length} logs`);
 
 const alerts = runDetection(parsedLogs);

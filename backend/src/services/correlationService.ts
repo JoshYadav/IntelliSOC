@@ -13,7 +13,7 @@ export function runCorrelation(logs: ParsedLog[]): DetectionAlert[] {
   // Group logs by IP, ordered by timestamp
   const ipLogs: Map<string, ParsedLog[]> = new Map();
   for (const log of logs) {
-    if (log.eventType === 'LOGIN_FAILED' || log.eventType === 'LOGIN_SUCCESS') {
+    if ((log.eventType === 'LOGIN_FAILED' || log.eventType === 'LOGIN_SUCCESS') && log.ip) {
       const existing = ipLogs.get(log.ip) || [];
       existing.push(log);
       ipLogs.set(log.ip, existing);
@@ -30,7 +30,7 @@ export function runCorrelation(logs: ParsedLog[]): DetectionAlert[] {
     for (const entry of logEntries) {
       if (entry.eventType === 'LOGIN_FAILED') {
         failureCount++;
-        failedUsers.add(entry.user);
+        if (entry.user) failedUsers.add(entry.user);
       } else if (entry.eventType === 'LOGIN_SUCCESS') {
         // Check if there were enough failures before this success
         if (failureCount >= CORRELATION_FAILURE_THRESHOLD) {

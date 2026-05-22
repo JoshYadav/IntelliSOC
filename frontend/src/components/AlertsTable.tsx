@@ -13,9 +13,23 @@ const severityColors: Record<string, { bg: string; text: string; border: string 
 };
 
 const typeLabels: Record<string, { label: string; icon: string }> = {
+  // SSH / Linux
   BRUTE_FORCE: { label: 'Brute Force', icon: '🔨' },
   MULTIPLE_USERS: { label: 'Multi-User', icon: '👥' },
   ACCOUNT_COMPROMISE: { label: 'Compromise', icon: '💀' },
+  SUDO_ABUSE: { label: 'Sudo Abuse', icon: '⚡' },
+  // HTTP
+  HTTP_BRUTE_FORCE: { label: 'HTTP Brute Force', icon: '🌐' },
+  DIRECTORY_SCAN: { label: 'Dir Scan', icon: '📂' },
+  // Windows
+  WINDOWS_BRUTE_FORCE: { label: 'Win Brute Force', icon: '🪟' },
+  PERSISTENCE_DETECTED: { label: 'Persistence', icon: '🔗' },
+  LATERAL_MOVEMENT: { label: 'Lateral Movement', icon: '↔️' },
+  // Sysmon
+  MALWARE_PROCESS_CHAIN: { label: 'Malware Chain', icon: '🦠' },
+  SUSPICIOUS_NETWORK: { label: 'Suspicious Net', icon: '📡' },
+  // Firewall
+  PORT_SCAN: { label: 'Port Scan', icon: '🔍' },
 };
 
 export default function AlertsTable({ alerts }: AlertsTableProps) {

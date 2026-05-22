@@ -5,9 +5,9 @@ import SummaryCards from './components/SummaryCards';
 import AlertsTable from './components/AlertsTable';
 import AnalyticsCharts from './components/AnalyticsCharts';
 import Filters from './components/Filters';
-import { Shield, Download, Activity, Search, Loader2 } from 'lucide-react';
+import { Shield, Download, Activity, Search, Loader2, FileType } from 'lucide-react';
 import { getAlerts, getAnalytics, downloadReport } from './api/client';
-import type { Alert, AnalyticsData } from './types';
+import type { Alert, AnalyticsData, LogFormat } from './types';
 
 function App() {
   const [sessionId, setSessionId] = useState<string | null>(null);
@@ -18,6 +18,7 @@ function App() {
   const [severityFilter, setSeverityFilter] = useState('ALL');
   const [typeFilter, setTypeFilter] = useState('ALL');
   const [isLoading, setIsLoading] = useState(false);
+  const [logFormat, setLogFormat] = useState<LogFormat>('UNKNOWN');
 
   // Fetch alerts and analytics when session or filters change
   const fetchData = useCallback(async () => {
@@ -46,10 +47,11 @@ function App() {
     fetchData();
   }, [fetchData]);
 
-  const handleUploadSuccess = (newSessionId: string, logs: number, alertCount: number) => {
+  const handleUploadSuccess = (newSessionId: string, logs: number, alertCount: number, format: string) => {
     setSessionId(newSessionId);
     setLogsProcessed(logs);
     setAlertsGenerated(alertCount);
+    setLogFormat(format as LogFormat);
     setSeverityFilter('ALL');
     setTypeFilter('ALL');
   };
@@ -157,6 +159,23 @@ function App() {
               <Activity size={14} className="pulse-glow" />
               Session Analyzed
             </span>
+            {logFormat !== 'UNKNOWN' && (
+              <span style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.4rem',
+                padding: '0.4rem 0.8rem',
+                borderRadius: '20px',
+                background: 'rgba(139, 92, 246, 0.1)',
+                border: '1px solid rgba(139, 92, 246, 0.2)',
+                color: 'var(--color-accent-violet)',
+                fontSize: '0.78rem',
+                fontWeight: 500,
+              }}>
+                <FileType size={14} />
+                {logFormat.replace(/_/g, ' ')}
+              </span>
+            )}
             <button
               id="download-report-btn"
               onClick={handleDownloadReport}

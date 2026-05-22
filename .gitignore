@@ -1,7 +1,23 @@
 node_modules
-.env
 build
 .prisma
+
+# Environment files — never commit secrets
+.env
+.env.local
+.env.production
+backend/.env
+frontend/.env
+
+# SQLite database files — never commit local DB
+*.db
+*.db-shm
+*.db-wal
+backend/prisma/dev.db
+backend/prisma/dev.db-journal
+
+# Prisma migrations lock (keep migrations, ignore dev artifacts)
+backend/prisma/.migration-lock.toml
 
 # Ignore uploaded log files
 uploads/

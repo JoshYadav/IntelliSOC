@@ -1,92 +1,38 @@
-# 🚀 IntelliSOC – AI-Powered Cyber Threat Detection System (Mini SIEM)
+# IntelliSOC – Log-Based Cyber Attack Detection System (Mini SIEM)
 
-IntelliSOC is a full-stack **Security Information and Event Management (SIEM)** system that analyzes system logs, detects cyber threats, correlates events, and presents actionable insights through an interactive dashboard.
-
-This project simulates real-world SOC workflows used in modern cybersecurity environments.
-
----
-
-## ⚠️ Problem
-
-Modern systems generate massive volumes of logs, but analyzing them manually is:
-
-* ⏳ Time-consuming
-* ❌ Error-prone
-* 🚫 Inefficient for real-time threat detection
-
-Security teams require automated systems to efficiently detect and respond to threats.
-
----
-
-## 💡 Solution
-
-IntelliSOC solves this by:
-
-* 🔍 Automatically detecting cyber attacks
-* 🔗 Correlating multiple events to uncover real threats
-* 🧠 Providing explainable, analyst-friendly insights
-
-It acts as a **lightweight SIEM system** for practical cybersecurity analysis.
-
----
-
-## 🎬 Demo Flow
-
-1. Upload a `.log` file
-2. Logs are parsed into structured data
-3. Threats are detected (e.g., brute force, suspicious activity)
-4. Events are correlated to identify complex attacks
-5. Risk scores and MITRE mapping are applied
-6. Results are visualized on a dashboard
-7. Export results as CSV
-
----
-
-## 🚀 Key Differentiators
-
-* 🔍 **Explainable Alerts** – Clear reasoning behind each detection
-* ⏱️ **Time-Based Behavioral Analysis** – Detects anomalies over time
-* 📊 **Session-Based Isolation** – Clean, independent log analysis
-* ⚡ **Lightweight & Fast** – Deployable mini-SIEM system
-
----
+IntelliSOC is a full-stack Security Information and Event Management (SIEM) application designed to ingest system logs, detect cyber threats, correlate events, and display actionable insights through an intuitive, modern dashboard. 
 
 ## 🚀 Features
 
-### 🔹 File Ingestion
+- **File Ingestion:** Upload `.log` files directly via the dashboard for rapid analysis.
+- **Parsing Engine:** Converts raw log files into structured JSON utilizing optimized regex patterns.
+- **Threat Detection Engine:**
+  - Identifies **Brute Force Attacks** (e.g., numerous failed logins from a single IP within a short time window).
+  - Detects **Suspicious Activity** (e.g., multiple unique users logging in from the same IP indicating account sharing or distributed attacks).
+- **Correlation Engine:** Correlates sequences like multiple failed logins followed by a success to detect potential **Account Compromise**.
+- **Time-Based Logic & Aggregation:** Maintains strict time windows to prioritize recent events and aggregates duplicate alerts by (IP + type) with a frequency count instead of database clutter.
+- **Enrichment & Context:** Evaluates risk scores out of 100, maps threats to MITRE ATT&CK tactics, and provides clear, human-readable explanations of the attack patterns.
+- **Session-Based Management:** Groups logs and alerts by upload session to ensure forensic boundaries are cleanly maintained.
 
-* Upload `.log` files directly
+## 🛠️ Tech Stack
 
-### 🔹 Parsing Engine
+### Frontend
+- **Framework:** React 19 w/ TypeScript & Vite
+- **Styling:** Tailwind CSS v4
+- **Charts:** Recharts
+- **Icons:** Lucide React
+- **HTTP Client:** Axios
 
-* Converts raw logs → structured JSON
-
-### 🔹 Threat Detection Engine
-
-* Brute Force Attack detection
-* Suspicious multi-user IP detection
-
-### 🔹 Correlation Engine
-
-* Detects account compromise patterns
-
-### 🔹 Enrichment Layer
-
-* Risk scoring (0–100)
-* MITRE ATT&CK mapping
-* Human-readable explanations
-
-### 🔹 Session Management
-
-* Isolates each upload for clean analysis
-
-### 🔹 Export Reports
-
-* Download results as CSV
+### Backend
+- **Runtime:** Node.js
+- **Framework:** Express.js + TypeScript
+- **File Uploads:** Multer
+- **Database ORM:** Prisma
+- **Database:** SQLite (file-based, zero-config for local dev)
 
 ---
 
-## 🏗️ Architecture
+## 🏗️ Architecture & Internal Workflow
 
 ```mermaid
 graph TD;
@@ -95,112 +41,101 @@ graph TD;
     C -->|Structured JSON| D[Detection Engine]
     D --> E[Correlation Engine]
     E --> F[Enrichment Layer]
-    F -->|Risk Scoring & MITRE| G[(PostgreSQL DB)]
+    F -->|Risk Scoring & MITRE| G[(SQLite DB via Prisma)]
     G -->|Alerts & Analytics API| H[Frontend Dashboard]
 ```
 
----
-
-## 🛠️ Tech Stack
-
-### 🔹 Frontend
-
-* React 19 + TypeScript + Vite
-* Tailwind CSS
-* Recharts
-* Lucide React
-
-### 🔹 Backend
-
-* Node.js + Express + TypeScript
-* Multer (file upload)
-* Prisma ORM
-
-### 🔹 Database
-
-* PostgreSQL
+1. **Upload & Parse:** A user uploads a `.log` file on the frontend. The backend accepts it via Multer, reads it line-by-line, and converts the raw text into structured JSON.
+2. **Detect:** The Detection Engine tracks IP behavior, specifically looking at failed logins within a rolling time window and unique user constraints.
+3. **Correlate & Enrich:** Events are correlated (e.g. failure followed by success). They are automatically mapped to a severity, risk score (0-100), and specific MITRE tactic.
+4. **Store:** All raw logs, parsed data, and resulting alerts are tied to a unique `session_id` and securely saved in a **SQLite** database via Prisma ORM.
+5. **Display:** The frontend queries the aggregated alerts and overall analytics for the session, populating the interactive summary cards and the main Alerts Table.
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Getting Started & Deployment Guide
 
-### 📦 Prerequisites
+Follow these instructions to run the application locally or deploy it to a server.
 
-* Node.js (v18+)
-* PostgreSQL
+### Prerequisites
 
----
+- [Node.js](https://nodejs.org/) (v18+ recommended)
+- No external database needed — the project uses **SQLite** (bundled, file-based via Prisma).
 
-### 1️⃣ Database Setup
+> ⚠️ **Security Notice:** Never commit your `.env` file or the `prisma/dev.db` file to version control. Both are excluded by `.gitignore`. If you accidentally committed either, rotate any exposed API keys immediately.
+
+### 1. Environment Setup
 
 ```bash
 cd backend
-echo "DATABASE_URL=postgresql://USER:PASSWORD@localhost:5432/intellisoc" > .env
+# Copy the example and fill in your own values
+copy .env.example .env
+# Set ALLOWED_ORIGINS to your frontend URL
+# Optionally add your ABUSEIPDB_API_KEY
 ```
 
----
+### 2. Backend Setup
 
-### 2️⃣ Backend Setup
-
+From the root of the project:
 ```bash
 cd backend
 npm install
+
+# Generate Prisma Client & create the SQLite database file
 npx prisma generate
 npx prisma migrate dev --name init
+
+# Start the development server
 npm run dev
+# The backend will run on http://localhost:5000
 ```
 
----
+To run in production:
+```bash
+npm run build
+npm start
+# The backend will output to the /dist folder and use server.js
+```
 
-### 3️⃣ Frontend Setup
+### 3. Frontend Setup
 
+From the root of the project:
 ```bash
 cd frontend
 npm install
+
+# Start the development server
 npm run dev
+# The frontend will typically run on http://localhost:5173
+```
+
+To build for production:
+```bash
+npm run build
+# The compiled assets will be placed in the `/dist` folder. 
+# Serve this folder using an HTTP server like Nginx, Apache, or serve (npm).
 ```
 
 ---
 
-## 🌍 Real-World Impact
+## 📂 Key Project Structure
 
-IntelliSOC helps security teams:
-
-* ⚡ Detect attacks faster
-* 🧠 Understand threat patterns
-* 🛡️ Take immediate action
-
-This project demonstrates how modern SIEM tools operate in real-world cybersecurity environments.
-
----
-
-## 🚀 Future Enhancements
-
-* Real-time log streaming (WebSockets)
-* AI/ML-based anomaly detection
-* Integration with threat intelligence APIs
-* Role-based authentication
-
----
+- `backend/src/`
+  - `server.ts` - Main Express entry point and routing logic
+  - `prisma/` - Database schema definitions
+- `frontend/src/`
+  - `components/` - Reusable React components (Dashboard, AlertsTable, etc.)
+  - `App.tsx` - Main Application logic
+  - `index.css` - Tailwind directives and global styles
 
 ## 🤝 Contributing
 
 Contributions are welcome!
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push and open a pull request
-
----
-
-## 👨‍💻 Made with ❤️ by
-
-* **Josh Yadav** – Cybersecurity & Detection Logic
-* **Vansh Tiwari** – Cybersecurity & Threat Analysis
-* **Keshav** – Full Stack Development
-
----
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ## 📝 License
 

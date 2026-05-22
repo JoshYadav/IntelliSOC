@@ -10,6 +10,7 @@ datasource db {
 model Session {
   id        String   @id @default(uuid())
   fileName  String
+  logFormat String   @default("UNKNOWN")
   createdAt DateTime @default(now())
   logs      Log[]
   alerts    Alert[]
@@ -39,6 +40,10 @@ model Alert {
   reputation  String?  // UNKNOWN | SUSPICIOUS | MALICIOUS
   count       Int      @default(1)
   timestamp   DateTime
+  // AbuseIPDB enrichment fields
+  abuseScore  Int?     // Confidence score 0-100 from AbuseIPDB
+  country     String?  // ISO country code (e.g. "US", "CN")
+  isp         String?  // Internet Service Provider name
   session     Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 
   @@index([sessionId])
