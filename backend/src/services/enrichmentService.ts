@@ -66,6 +66,11 @@ async function lookupIP(ip: string): Promise<IPEnrichment> {
       headers: { Key: apiKey, Accept: 'application/json' },
     });
 
+    if (response.status === 429) {
+      console.warn('[AbuseIPDB] Rate limit hit (429) — halting remaining lookups.');
+      return { ...fallback, __rateLimited: true } as any;
+    }
+
     if (!response.ok) {
       console.warn(`[AbuseIPDB] HTTP ${response.status} for IP ${ip}`);
       return fallback;
@@ -87,20 +92,62 @@ async function lookupIP(ip: string): Promise<IPEnrichment> {
   }
 }
 
+// ── Batched IP enrichment ─────────────────────────────────────────────────────
+/**
+ * AbuseIPDB free tier: 1,000 checks/day.
+ * Process IPs in small concurrent batches with a short pause between them to
+ * avoid bursting the rate limit on large log files.
+ */
+const BATCH_SIZE = 5;          // concurrent lookups per batch
+const BATCH_DELAY_MS = 500;    // pause between batches (ms)
+const fallbackEnrichment: IPEnrichment = { reputation: 'UNKNOWN', abuseScore: 0, country: null, isp: null };
+
+async function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function lookupIPsBatched(ips: string[]): Promise<Map<string, IPEnrichment>> {
+  const result = new Map<string, IPEnrichment>();
+  let rateLimited = false;
+
+  for (let i = 0; i < ips.length; i += BATCH_SIZE) {
+    // If a previous batch received a 429, skip remaining lookups gracefully
+    if (rateLimited) {
+      ips.slice(i).forEach((ip) => result.set(ip, fallbackEnrichment));
+      break;
+    }
+
+    const batch = ips.slice(i, i + BATCH_SIZE);
+    const batchResults = await Promise.all(batch.map((ip) => lookupIP(ip)));
+
+    batchResults.forEach((enrichment, idx) => {
+      result.set(batch[idx], enrichment);
+      // lookupIP returns a special marker when rate-limited
+      if ((enrichment as any).__rateLimited) rateLimited = true;
+    });
+
+    // Pause between batches (skip after the last one)
+    if (i + BATCH_SIZE < ips.length && !rateLimited) {
+      await sleep(BATCH_DELAY_MS);
+    }
+  }
+
+  return result;
+}
+
 // ── Main export ───────────────────────────────────────────────────────────────
 export async function enrichAlerts(alerts: DetectionAlert[]): Promise<DetectionAlert[]> {
-  // Deduplicate IPs (skip non-routable ones to save quota)
+  // Deduplicate public IPs only (private/loopback skipped to save quota)
   const uniqueIPs = [...new Set(alerts.map((a) => a.ip).filter((ip) => !PRIVATE_IP.test(ip)))];
 
-  // Fan-out API calls in parallel
-  const results = await Promise.all(uniqueIPs.map((ip) => lookupIP(ip)));
-  const ipEnrichment = new Map<string, IPEnrichment>();
-  uniqueIPs.forEach((ip, i) => ipEnrichment.set(ip, results[i]));
+  const ipEnrichment = uniqueIPs.length > 0
+    ? await lookupIPsBatched(uniqueIPs)
+    : new Map<string, IPEnrichment>();
 
   return alerts.map((alert) => {
-    const mitreInfo    = MITRE_MAPPINGS[alert.type];
+    const mitreInfo     = MITRE_MAPPINGS[alert.type];
     const explanationFn = EXPLANATIONS[alert.type];
-    const enrichment   = ipEnrichment.get(alert.ip) ?? { reputation: 'UNKNOWN', abuseScore: 0, country: null, isp: null };
+    const enrichment    = ipEnrichment.get(alert.ip) ?? fallbackEnrichment;
 
     return {
       ...alert,

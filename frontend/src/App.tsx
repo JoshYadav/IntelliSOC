@@ -5,7 +5,8 @@ import SummaryCards from './components/SummaryCards';
 import AlertsTable from './components/AlertsTable';
 import AnalyticsCharts from './components/AnalyticsCharts';
 import Filters from './components/Filters';
-import { Shield, Download, Activity, Search, Loader2, FileType } from 'lucide-react';
+import ErrorBoundary from './components/ErrorBoundary';
+import { Shield, Download, Activity, Search, Loader2, FileType, AlertCircle, RefreshCw } from 'lucide-react';
 import { getAlerts, getAnalytics, downloadReport } from './api/client';
 import type { Alert, AnalyticsData, LogFormat } from './types';
 
@@ -18,12 +19,14 @@ function App() {
   const [severityFilter, setSeverityFilter] = useState('ALL');
   const [typeFilter, setTypeFilter] = useState('ALL');
   const [isLoading, setIsLoading] = useState(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [logFormat, setLogFormat] = useState<LogFormat>('UNKNOWN');
 
   // Fetch alerts and analytics when session or filters change
   const fetchData = useCallback(async () => {
     if (!sessionId) return;
     setIsLoading(true);
+    setFetchError(null);
     try {
       const filters: { severity?: string; type?: string } = {};
       if (severityFilter !== 'ALL') filters.severity = severityFilter;
@@ -36,8 +39,13 @@ function App() {
 
       setAlerts(alertsData);
       setAnalytics(analyticsData);
-    } catch (err) {
+    } catch (err: any) {
       console.error('Failed to fetch data:', err);
+      setFetchError(
+        err?.response?.data?.error ??
+        err?.message ??
+        'Failed to load session data. The backend may be unreachable.'
+      );
     } finally {
       setIsLoading(false);
     }
@@ -214,15 +222,65 @@ function App() {
       {/* Dashboard Content (visible after upload) */}
       {sessionId && (
         <>
+          {/* Fetch error banner */}
+          {fetchError && (
+            <div
+              role="alert"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+                padding: '0.9rem 1.25rem',
+                marginBottom: '1.5rem',
+                borderRadius: 'var(--radius-sm)',
+                background: 'rgba(239, 68, 68, 0.08)',
+                border: '1px solid rgba(239, 68, 68, 0.25)',
+                color: 'var(--color-critical)',
+                fontSize: '0.875rem',
+                fontWeight: 500,
+              }}
+            >
+              <AlertCircle size={18} style={{ flexShrink: 0 }} />
+              <span style={{ flex: 1 }}>{fetchError}</span>
+              <button
+                id="fetch-error-retry-btn"
+                onClick={() => fetchData()}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '0.35rem',
+                  padding: '0.35rem 0.85rem',
+                  borderRadius: '6px',
+                  border: '1px solid rgba(239, 68, 68, 0.3)',
+                  background: 'rgba(239, 68, 68, 0.12)',
+                  color: 'var(--color-critical)',
+                  fontSize: '0.8rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  transition: 'all var(--transition-base)',
+                  flexShrink: 0,
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(239,68,68,0.22)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(239,68,68,0.12)'; }}
+              >
+                <RefreshCw size={13} /> Retry
+              </button>
+            </div>
+          )}
+
           {/* Summary Cards */}
-          <SummaryCards
-            analytics={analytics}
-            logsProcessed={logsProcessed}
-            alertsGenerated={alertsGenerated}
-          />
+          <ErrorBoundary>
+            <SummaryCards
+              analytics={analytics}
+              logsProcessed={logsProcessed}
+              alertsGenerated={alertsGenerated}
+            />
+          </ErrorBoundary>
 
           {/* Analytics Charts */}
-          <AnalyticsCharts analytics={analytics} />
+          <ErrorBoundary>
+            <AnalyticsCharts analytics={analytics} />
+          </ErrorBoundary>
 
           {/* Alerts Section */}
           <div style={{ marginBottom: '2rem' }}>
@@ -278,7 +336,9 @@ function App() {
                 <p style={{ fontSize: '0.95rem', fontWeight: 500 }}>Analyzing threats...</p>
               </div>
             ) : (
-              <AlertsTable alerts={alerts} />
+              <ErrorBoundary>
+                <AlertsTable alerts={alerts} />
+              </ErrorBoundary>
             )}
           </div>
         </>
