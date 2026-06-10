@@ -157,13 +157,13 @@ export async function getEndpointDetail(id: string): Promise<Endpoint> {
 }
 
 export async function isolateHost(id: string): Promise<Endpoint> {
-  const { data } = await api.post<Endpoint>(`/endpoints/${id}/isolate`);
-  return data;
+  const { data } = await api.post<{ message: string; endpoint: Endpoint }>(`/endpoints/${id}/isolate`);
+  return data.endpoint;
 }
 
 export async function unisolateHost(id: string): Promise<Endpoint> {
-  const { data } = await api.post<Endpoint>(`/endpoints/${id}/unisolate`);
-  return data;
+  const { data } = await api.post<{ message: string; endpoint: Endpoint }>(`/endpoints/${id}/unisolate`);
+  return data.endpoint;
 }
 
 export async function getEndpointTelemetry(

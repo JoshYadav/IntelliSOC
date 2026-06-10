@@ -271,7 +271,7 @@ export default function KillChainTimeline({ alerts }: KillChainTimelineProps) {
                     )}
                   </div>
                   
-                  <p style={{ fontSize: 'var(--text-sm)', color: T.textSecondary, margin: '8px 0 12px 0', lineHeight: 1.55, fontFamily: 'var(--font-display)' }}>
+                  <p style={{ fontSize: 'var(--text-sm)', color: T.textSecondary, margin: '8px 0 12px 0', lineHeight: 1.55, fontFamily: 'var(--font-display)', wordBreak: 'break-all', overflowWrap: 'anywhere' }}>
                     {alert.explanation || 'Suspicious network action detected.'}
                   </p>
                   

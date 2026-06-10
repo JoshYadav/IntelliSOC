@@ -917,7 +917,7 @@ export default function EndpointDetailPage() {
                         </span>
                       </div>
 
-                      <p style={{ margin: 0, fontSize: 'var(--text-sm)', color: T.textSecondary, lineHeight: 1.6, fontFamily: 'var(--font-display)' }}>
+                      <p style={{ margin: 0, fontSize: 'var(--text-sm)', color: T.textSecondary, lineHeight: 1.6, fontFamily: 'var(--font-display)', wordBreak: 'break-all', overflowWrap: 'anywhere' }}>
                         {alert.explanation}
                       </p>
 
