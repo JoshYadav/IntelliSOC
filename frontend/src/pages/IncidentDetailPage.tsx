@@ -510,7 +510,7 @@ export default function IncidentDetailPage() {
             {isAiGenerating ? (
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '2.5rem 0', gap: '8px' }}>
                 <Loader2 size={24} style={{ color: T.primary, animation: 'spin 1s linear infinite' }} />
-                <span style={{ fontSize: 'var(--text-sm)', fontFamily: 'var(--font-display)', color: T.textMuted }}>Running Gemini security assessment...</span>
+                <span style={{ fontSize: 'var(--text-sm)', fontFamily: 'var(--font-display)', color: T.textMuted }}>Running AI security assessment...</span>
               </div>
             ) : incident.aiSummary ? (
               <div style={{
@@ -549,7 +549,7 @@ export default function IncidentDetailPage() {
                   }}
                 >
                   <Sparkles size={14} />
-                  Compile with Gemini AI
+                  Compile with SecOps Copilot
                 </button>
               </div>
             )}

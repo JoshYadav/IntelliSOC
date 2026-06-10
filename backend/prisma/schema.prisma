@@ -71,7 +71,7 @@ model Incident {
   priority     String          @default("MEDIUM")
   // LOW | MEDIUM | HIGH | CRITICAL
   assignee     String?
-  aiSummary    String?         // Gemini-generated summary
+  aiSummary    String?         // AI-generated summary
   createdAt    DateTime        @default(now())
   updatedAt    DateTime        @updatedAt
   alerts       IncidentAlert[]

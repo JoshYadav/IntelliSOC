@@ -21,7 +21,7 @@ IntelliSOC is a comprehensive, multi-pillar security operations platform designe
 IntelliSOC is built using a decoupled service-oriented architecture:
 - **Frontend**: A React SPA styled using glassmorphism and modern CSS custom properties, utilizing Lucide icons and Recharts.
 - **Backend**: An Express.js Node.js server powered by Prisma ORM and SQLite.
-- **Enrichment Services**: External connections to AbuseIPDB for IP reputation and Google Gemini (`gemini-1.5-flash`) for AI narrative generation.
+- **Enrichment Services**: External connections to AbuseIPDB for IP reputation and Generative AI models for AI narrative generation.
 
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
@@ -33,7 +33,7 @@ IntelliSOC is built using a decoupled service-oriented architecture:
 │   │ • Log Parser       │   │ • Incident Queue   │   │ • Host Inven.│   │
 │   │ • Rules Engine     │──▶│ • Playbook Engine  │◀──│ • Proc Tree  │   │
 │   │ • AbuseIPDB Enrich │   │ • Human-in-Loop    │   │ • Host Isol. │   │
-│   │ • Attack Heatmap   │   │ • Gemini AI Summary│   │ • Telemetry  │   │
+│   │ • Attack Heatmap   │   │ • AI SecOps Summary│   │ • Telemetry  │   │
 │   │ • Geo-IP Map       │   │ • Slack Webhooks   │   │ • Agent API  │   │
 │   └────────────────────┘   └────────────────────┘   └──────────────┘   │
 │              │                        │                    │           │
@@ -111,8 +111,8 @@ Playbooks are defined as sequential steps triggered by specific alert rules:
 *   **BLOCK_IP (Human Gate)**: Generates a proposed firewall block command (`iptables`). Halts execution until the analyst clicks "Approve & Execute" in the console.
 *   **ISOLATE_ENDPOINT (Human Gate)**: Recommends network isolation of a compromised endpoint. Requires explicit click approval to sever host connectivity.
 
-### C. Gemini AI Security Assistant
-Utilizes Google Gemini to summarize security incidents:
+### C. AI Security Assistant
+Utilizes Generative AI models to summarize security incidents:
 *   **Executive Summary**: Generates a 3-sentence, plain-English summary outlining the timeline, targets, and attack path.
 *   **Attacker Objective**: Identifies the primary goal (e.g., Initial Access, Privilege Escalation, Exfiltration) based on MITRE mappings.
 *   **Response Checklist**: Prescribes 3 concrete remediation instructions for the analyst.
@@ -284,7 +284,7 @@ model EndpointTelemetry {
 | `/api/incidents/:id` | **GET** | *None* | Retrieves complete details for an incident, including timeline audit logs and playbook runs. |
 | `/api/incidents/:id` | **PATCH** | `status`, `priority`, `assignee` | Updates metadata fields and appends status history. |
 | `/api/incidents/:id/notes` | **POST** | `content` | Appends a note created by the analyst. |
-| `/api/incidents/:id/ai-summary` | **GET** | `force` (Query) | Fetches the AI summary. Generates it using Gemini if it is missing or if `force=true`. |
+| `/api/incidents/:id/ai-summary` | **GET** | `force` (Query) | Fetches the AI summary. Generates it using the AI engine if it is missing or if `force=true`. |
 | `/api/incidents/:id/playbooks/:pid/run` | **POST** | *None* | Triggers a playbook run manually against an incident. |
 | `/api/incidents/:id/actions/:runId/approve`| **POST** | `stepIndex` | Approves a human-gated step, executing the associated action. |
 | `/api/playbooks` | **GET** | *None* | Fetches playbook templates. |
@@ -308,7 +308,7 @@ ALLOWED_ORIGINS="http://localhost:5173"
 
 # Enrichment Keys (Optional but highly recommended)
 ABUSEIPDB_API_KEY="your_abuseipdb_api_key_here"
-GEMINI_API_KEY="your_gemini_api_key_here"
+AI_API_KEY="your_ai_api_key_here"
 
 # Notifications (Optional)
 SLACK_WEBHOOK_URL="your_slack_webhook_url_here"

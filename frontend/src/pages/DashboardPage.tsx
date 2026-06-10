@@ -133,7 +133,7 @@ export default function DashboardPage() {
       .catch(err => {
         if (isMounted) {
           if (err.response?.status === 503) {
-            setAiError('AI assessment unavailable: configure GEMINI_API_KEY on the backend.');
+            setAiError('AI assessment unavailable: configure AI_API_KEY on the backend.');
           } else {
             console.error('Failed to fetch AI Summary:', err);
             setAiError(err.response?.data?.error || err.message || 'Failed to generate AI summary.');
@@ -419,7 +419,7 @@ export default function DashboardPage() {
               color: T.textMuted
             }}>
               <Sparkles size={12} style={{ color: T.primary }} />
-              gemini 1.5 pro
+              SecOps Copilot
             </div>
 
             <h3 style={{

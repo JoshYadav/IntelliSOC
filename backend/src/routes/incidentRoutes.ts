@@ -182,7 +182,7 @@ router.get('/:id/ai-summary', async (req: Request, res: Response) => {
     const summary = await generateIncidentSummary(id, force);
 
     if (!summary) {
-      return res.status(503).json({ error: 'AI summary unavailable — check GEMINI_API_KEY' });
+      return res.status(503).json({ error: 'AI summary unavailable — check AI_API_KEY' });
     }
 
     return res.json({ summary });

@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 
 const STEP_TYPES = [
-  { value: 'AI_SUMMARY', label: 'Generate AI Assessment (Gemini)', requiresApproval: false },
+  { value: 'AI_SUMMARY', label: 'Generate AI Assessment (SecOps Copilot)', requiresApproval: false },
   { value: 'NOTIFY_SLACK', label: 'Transmit Slack Payload', requiresApproval: false },
   { value: 'SEND_EMAIL', label: 'Dispatch SMTP Security Email', requiresApproval: false },
   { value: 'CREATE_INCIDENT', label: 'Queue Incident', requiresApproval: false },

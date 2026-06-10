@@ -91,10 +91,10 @@ ACTIONS:
 /**
  * Call Gemini API to generate content.
  */
-async function callGemini(prompt: string): Promise<string | null> {
-  const apiKey = process.env.GEMINI_API_KEY;
+async function callAiModel(prompt: string): Promise<string | null> {
+  const apiKey = process.env.AI_API_KEY;
   if (!apiKey) {
-    console.warn('[AI] GEMINI_API_KEY not set — skipping AI summary.');
+    console.warn('[AI] AI_API_KEY not set — skipping AI summary.');
     return null;
   }
 
@@ -128,7 +128,7 @@ async function callGemini(prompt: string): Promise<string | null> {
 
     return json.candidates?.[0]?.content?.parts?.[0]?.text ?? null;
   } catch (err: any) {
-    console.error('[AI] Gemini call failed:', err.message);
+    console.error('[AI] AI analysis call failed:', err.message);
     return null;
   }
 }
@@ -237,10 +237,10 @@ export async function generateIncidentSummary(
   }
 
   const prompt = buildPrompt(incident);
-  let summary = await callGemini(prompt);
+  let summary = await callAiModel(prompt);
 
   if (!summary) {
-    console.warn(`[AI] GEMINI_API_KEY not set or Gemini call failed — using offline fallback summary for incident ${incidentId}`);
+    console.warn(`[AI] AI_API_KEY not set or AI analysis call failed — using offline fallback summary for incident ${incidentId}`);
     summary = generateOfflineSummary(incident);
   }
 

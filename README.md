@@ -22,7 +22,7 @@ This project demonstrates practical skills in **Security Engineering, Threat Det
 │   │ • Log Parser       │   │ • Incident Queue   │   │ • Host Inven.│   │
 │   │ • Rules Engine     │──▶│ • Playbook Engine  │◀──│ • Proc Tree  │   │
 │   │ • AbuseIPDB Enrich │   │ • Human-in-Loop    │   │ • Host Isol. │   │
-│   │ • Attack Heatmap   │   │ • Gemini AI Summary│   │ • Telemetry  │   │
+│   │ • Attack Heatmap   │   │ • AI SecOps Summary│   │ • Telemetry  │   │
 │   │ • Geo-IP Map       │   │ • Slack Webhooks   │   │ • Agent API  │   │
 │   └────────────────────┘   └────────────────────┘   └──────────────┘   │
 │              │                        │                    │           │
@@ -44,7 +44,7 @@ This project demonstrates practical skills in **Security Engineering, Threat Det
 ### 2. SOAR (Security Orchestration, Automation, & Response)
 *   **Incident Management:** Alerts are aggregated by source IP and automatically triaged into centralized **Incidents** with unique IDs, ownership states, and detailed audit trails.
 *   **Playbook Engine:** Evaluates incoming alerts and triggers sequential automated playbooks:
-    *   *AI Summary generation* (using Google Gemini model `gemini-1.5-flash` to act as a Tier-1 virtual analyst).
+    *   *AI Summary generation* (using Google Gemini or compatible AI APIs to act as a Tier-1 virtual analyst).
     *   *Slack/Webhook notifications* detailing threat parameters.
     *   *Priority escalation rules* based on correlation thresholds.
 *   **Human-in-the-Loop Validation:** Destructive action proposals (e.g., executing an `iptables` IP block or quarantining a server) are staged in a pending state, requiring explicit analyst verification and click approval.
@@ -95,7 +95,7 @@ The repository contains a pre-built Sysmon log simulation file: [sysmon_sample.x
 2. Drag and drop [sysmon_sample.xml](file:///c:/Users/joshy/Downloads/IntelliSOC/share/sysmon_sample.xml) into the upload zone.
 3. Review the parsed log stream. The backend pipeline automatically extracts the structured XML data, fires the signatures, and maps them.
 4. **Analyst Inspection:**
-    *   Open the **AI Security Assessment** card to read the executive summary synthesized by Gemini.
+    *   Open the **AI Security Assessment** card to read the executive summary synthesized by the AI Copilot.
     *   Navigate to the **Incidents** tab. A high-priority incident will be created for the workstation, with a proposed playbook step to **Isolate Endpoint**.
     *   Click **Approve & Execute** to simulate active host isolation.
 
@@ -124,7 +124,7 @@ ALLOWED_ORIGINS="http://localhost:5173"
 
 # Enrichment Keys (Optional but highly recommended)
 ABUSEIPDB_API_KEY="your_abuseipdb_api_key_here"
-GEMINI_API_KEY="your_gemini_api_key_here"
+AI_API_KEY="your_ai_api_key_here"
 
 # Notifications (Optional)
 SLACK_WEBHOOK_URL="your_slack_webhook_url_here"
