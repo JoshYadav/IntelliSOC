@@ -395,7 +395,7 @@ export default function IncidentDetailPage() {
       <div style={{ display: 'grid', gridTemplateColumns: '3fr 1.2fr', gap: '2rem', alignItems: 'start', marginBottom: '3rem' }}>
         
         {/* Left Column (Investigation Main Console) */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', minWidth: 0 }}>
           
           {/* Pending Response Actions (HUMAN GATES) */}
           {pendingActions.length > 0 && (
@@ -664,7 +664,7 @@ export default function IncidentDetailPage() {
         </div>
         
         {/* Right Column (Control Panel & Actions) */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', minWidth: 0 }}>
           
           {/* Analyst Note Quick Form */}
           <div className="op-card" style={{ padding: '20px' }}>

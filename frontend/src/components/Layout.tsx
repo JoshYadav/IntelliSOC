@@ -34,7 +34,7 @@ export default function Layout() {
   const location = useLocation();
   const [clock, setClock] = useState(getTimeString());
   const [uptimeSeconds, setUptimeSeconds] = useState(0);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
