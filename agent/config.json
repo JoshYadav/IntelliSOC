@@ -1,0 +1,7 @@
+{
+  "backendUrl": "http://localhost:5000",
+  "intervalSeconds": 60,
+  "heartbeatIntervalSeconds": 10,
+  "watchPaths": ["c:/Users/joshy/Downloads/IntelliSOC/share/agent/watch_temp"],
+  "hostname": ""
+}

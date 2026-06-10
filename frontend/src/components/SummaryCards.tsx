@@ -1,4 +1,3 @@
-import { FileText, AlertTriangle, ShieldAlert, Siren, Eye, Globe } from 'lucide-react';
 import type { AnalyticsData } from '../types';
 
 interface SummaryCardsProps {
@@ -7,153 +6,106 @@ interface SummaryCardsProps {
   alertsGenerated: number;
 }
 
-interface CardData {
-  title: string;
-  value: string | number;
-  icon: React.ReactNode;
-  color: string;
-  bgColor: string;
-  subtitle?: string;
-}
+const T = {
+  bg:           "#080d16",
+  surface:      "#0e1623",
+  border:       "rgba(255,255,255,0.06)",
+  borderHover:  "rgba(255,255,255,0.11)",
+  primary:      "#818cf8",
+  critical:     "#fb7185",
+  high:         "#fb923c",
+  text:         "#f1f5f9",
+  textSecondary:"#94a3b8",
+};
 
 export default function SummaryCards({ analytics, logsProcessed, alertsGenerated }: SummaryCardsProps) {
-  const cards: CardData[] = [
+  const criticalCount = Number(analytics?.alertsBySeverity?.['CRITICAL'] ?? 0);
+  const highCount = Number(analytics?.alertsBySeverity?.['HIGH'] ?? 0);
+
+  const cards = [
     {
-      title: 'Total Logs',
+      label: 'Lines Parsed',
       value: analytics?.totalLogs ?? logsProcessed,
-      icon: <FileText size={22} />,
-      color: 'var(--color-accent-blue)',
-      bgColor: 'rgba(59, 130, 246, 0.1)',
-      subtitle: 'Lines parsed',
+      color: T.text,
     },
     {
-      title: 'Total Alerts',
+      label: 'Threats Detected',
       value: analytics?.totalAlerts ?? alertsGenerated,
-      icon: <AlertTriangle size={22} />,
-      color: 'var(--color-accent-amber)',
-      bgColor: 'rgba(245, 158, 11, 0.1)',
-      subtitle: 'Threats detected',
+      color: T.text,
     },
     {
-      title: 'Critical',
-      value: analytics?.alertsBySeverity?.['CRITICAL'] ?? 0,
-      icon: <Siren size={22} />,
-      color: 'var(--color-critical)',
-      bgColor: 'rgba(239, 68, 68, 0.1)',
-      subtitle: 'Immediate action',
+      label: 'Immediate Action',
+      value: criticalCount,
+      color: criticalCount > 0 ? T.critical : T.text,
     },
     {
-      title: 'High Severity',
-      value: analytics?.alertsBySeverity?.['HIGH'] ?? 0,
-      icon: <ShieldAlert size={22} />,
-      color: 'var(--color-high)',
-      bgColor: 'rgba(249, 115, 22, 0.1)',
-      subtitle: 'Needs attention',
+      label: 'Needs Attention',
+      value: highCount,
+      color: highCount > 0 ? T.high : T.text,
     },
     {
-      title: 'Medium Severity',
+      label: 'Monitor',
       value: analytics?.alertsBySeverity?.['MEDIUM'] ?? 0,
-      icon: <Eye size={22} />,
-      color: 'var(--color-medium)',
-      bgColor: 'rgba(234, 179, 8, 0.1)',
-      subtitle: 'Monitor closely',
+      color: T.text,
     },
     {
-      title: 'Unique IPs',
+      label: 'Source Addresses',
       value: analytics?.topIPs?.length ?? 0,
-      icon: <Globe size={22} />,
-      color: 'var(--color-accent-cyan)',
-      bgColor: 'rgba(6, 182, 212, 0.1)',
-      subtitle: 'Source addresses',
-    },
-    {
-      title: 'Risk Score',
-      value: analytics?.riskDistribution?.[0]?.value
-        ? `${analytics.riskDistribution[0].value} Critical`
-        : '—',
-      icon: <AlertTriangle size={22} />,
-      color: 'var(--color-accent-violet)',
-      bgColor: 'rgba(139, 92, 246, 0.1)',
-      subtitle: 'Highest bracket',
+      color: T.text,
     },
   ];
 
   return (
     <div style={{
       display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-      gap: '1rem',
-      marginBottom: '2rem',
+      gridTemplateColumns: 'repeat(6, 1fr)',
+      gap: '1.5rem', // spacious layout
+      marginBottom: '3rem',
     }}>
       {cards.map((card, i) => (
         <div
-          key={card.title}
-          className={`glass-card animate-fade-in-up delay-${i + 1}`}
+          key={card.label}
           style={{
-            padding: '1.25rem',
-            position: 'relative',
-            overflow: 'hidden',
+            background: T.surface,
+            border: `1px solid ${T.border}`,
+            borderRadius: '16px',
+            padding: '24px',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.4), 0 8px 24px rgba(0,0,0,0.2)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            transition: 'border-color 0.15s ease',
+            animation: 'fadeUp 0.4s ease both',
+            animationDelay: `${i * 60}ms`,
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.borderColor = T.borderHover;
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.borderColor = T.border;
           }}
         >
-          {/* Accent bar */}
+          {/* Large Number */}
           <div style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            height: '3px',
-            background: card.color,
-            opacity: 0.7,
-          }} />
-
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: '0.75rem',
-          }}>
-            <span style={{
-              fontSize: '0.75rem',
-              fontWeight: 600,
-              textTransform: 'uppercase',
-              letterSpacing: '0.05em',
-              color: 'var(--color-text-secondary)',
-            }}>
-              {card.title}
-            </span>
-            <span style={{
-              fontSize: '1.5rem',
-              width: '2.25rem',
-              height: '2.25rem',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderRadius: 'var(--radius-sm)',
-              background: card.bgColor,
-              color: card.color,
-            }}>
-              {card.icon}
-            </span>
-          </div>
-
-          <div style={{
-            fontSize: '1.75rem',
-            fontWeight: 800,
+            fontFamily: 'var(--font-display)',
+            fontSize: '3.25rem',
+            fontWeight: 700,
             color: card.color,
             lineHeight: 1.1,
-            marginBottom: '0.25rem',
+            marginBottom: '8px',
           }}>
             {card.value}
           </div>
 
-          {card.subtitle && (
-            <div style={{
-              fontSize: '0.75rem',
-              color: 'var(--color-text-muted)',
-            }}>
-              {card.subtitle}
-            </div>
-          )}
+          {/* Label Below */}
+          <div style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: 'var(--text-sm)',
+            fontWeight: 500,
+            color: T.textSecondary,
+          }}>
+            {card.label}
+          </div>
         </div>
       ))}
     </div>

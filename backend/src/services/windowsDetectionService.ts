@@ -119,10 +119,42 @@ function detectLateralMovement(logs: ParsedLog[]): DetectionAlert[] {
   return alerts;
 }
 
+// ── Windows Honeypot Usernames ───────────────────────────────────────────────
+function detectWindowsHoneypotAttempts(logs: ParsedLog[]): DetectionAlert[] {
+  const alerts: DetectionAlert[] = [];
+  const HONEYPOT_USERNAMES = ['root', 'admin', 'administrator', 'guest', 'support', 'test'];
+
+  for (const log of logs) {
+    if (log.eventType === 'WIN_LOGON_FAILED' && log.user && log.ip) {
+      const usernameLower = log.user.toLowerCase();
+      if (HONEYPOT_USERNAMES.includes(usernameLower)) {
+        const exists = alerts.find(a => a.ip === log.ip && a.user === log.user && a.type === 'HONEYPOT_TARGET');
+        if (exists) {
+          exists.count++;
+          exists.timestamp = log.timestamp > exists.timestamp ? log.timestamp : exists.timestamp;
+        } else {
+          alerts.push({
+            type: 'HONEYPOT_TARGET',
+            ip: log.ip,
+            user: log.user,
+            severity: 'HIGH',
+            riskScore: 75,
+            count: 1,
+            timestamp: log.timestamp,
+            explanation: `Login attempt against Windows honeypot account "${log.user}" from IP ${log.ip}. This indicates automated credential scanning targeting administrative endpoints.`,
+          });
+        }
+      }
+    }
+  }
+  return alerts;
+}
+
 export function runWindowsDetection(logs: ParsedLog[]): DetectionAlert[] {
   return [
     ...detectWindowsBruteForce(logs),
     ...detectPersistence(logs),
     ...detectLateralMovement(logs),
+    ...detectWindowsHoneypotAttempts(logs),
   ];
 }

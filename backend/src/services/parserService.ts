@@ -5,10 +5,10 @@ import { ParsedLog, LogFormat, EventType } from '../utils/types';
 // ═══════════════════════════════════════════════════════════════════════════════
 
 // SSH auth
-const SSH_FAILED  = /^(?:(\w+\s+\d+\s+[\d:]+)\s+\S+\s+)?sshd\[\d+\]:\s+Failed password for (?:invalid user )?(\S+) from ([\d.]+)/;
-const SSH_SUCCESS = /^(?:(\w+\s+\d+\s+[\d:]+)\s+\S+\s+)?sshd\[\d+\]:\s+Accepted password for (\S+) from ([\d.]+)/;
-const SUDO_PAT    = /^(?:(\w+\s+\d+\s+[\d:]+)\s+\S+\s+)?sudo:\s+(\S+)\s+:.*?COMMAND=(.*)/;
-const SU_PAT      = /^(?:(\w+\s+\d+\s+[\d:]+)\s+\S+\s+)?su\b.*?:\s+(pam_authenticate|Successful su|FAILED su|BAD su)/i;
+const SSH_FAILED  = /^(?:(\w+\s+\d+\s+[\d:]+)\s+(\S+)\s+)?sshd\[\d+\]:\s+Failed password for (?:invalid user )?(\S+) from ([\d.]+)/;
+const SSH_SUCCESS = /^(?:(\w+\s+\d+\s+[\d:]+)\s+(\S+)\s+)?sshd\[\d+\]:\s+Accepted password for (\S+) from ([\d.]+)/;
+const SUDO_PAT    = /^(?:(\w+\s+\d+\s+[\d:]+)\s+(\S+)\s+)?sudo:\s+(\S+)\s+:.*?COMMAND=(.*)/;
+const SU_PAT      = /^(?:(\w+\s+\d+\s+[\d:]+)\s+(\S+)\s+)?su\b.*?:\s+(pam_authenticate|Successful su|FAILED su|BAD su)/i;
 
 // Apache / Nginx combined log
 // 1.2.3.4 - user [10/Oct/2000:13:55:36 -0700] "GET /path HTTP/1.1" 200 1234 "ref" "ua"
@@ -114,22 +114,22 @@ function parseSSHAuth(content: string): ParsedLog[] {
 
     const failed = t.match(SSH_FAILED);
     if (failed) {
-      logs.push({ timestamp: parseSyslog(failed[1]), format: 'SSH_AUTH', eventType: 'LOGIN_FAILED', user: failed[2], ip: failed[3], rawLog: t });
+      logs.push({ timestamp: parseSyslog(failed[1]), format: 'SSH_AUTH', eventType: 'LOGIN_FAILED', computer: failed[2], user: failed[3], ip: failed[4], rawLog: t });
       continue;
     }
     const success = t.match(SSH_SUCCESS);
     if (success) {
-      logs.push({ timestamp: parseSyslog(success[1]), format: 'SSH_AUTH', eventType: 'LOGIN_SUCCESS', user: success[2], ip: success[3], rawLog: t });
+      logs.push({ timestamp: parseSyslog(success[1]), format: 'SSH_AUTH', eventType: 'LOGIN_SUCCESS', computer: success[2], user: success[3], ip: success[4], rawLog: t });
       continue;
     }
     const sudo = t.match(SUDO_PAT);
     if (sudo) {
-      logs.push({ timestamp: parseSyslog(sudo[1]), format: 'SSH_AUTH', eventType: 'SUDO_COMMAND', user: sudo[2], sudoCommand: sudo[3].trim(), ip: 'LOCAL', rawLog: t });
+      logs.push({ timestamp: parseSyslog(sudo[1]), format: 'SSH_AUTH', eventType: 'SUDO_COMMAND', computer: sudo[2], user: sudo[3], sudoCommand: sudo[4].trim(), ip: 'LOCAL', rawLog: t });
       continue;
     }
     const su = t.match(SU_PAT);
     if (su) {
-      logs.push({ timestamp: parseSyslog(undefined), format: 'SSH_AUTH', eventType: 'SU_ATTEMPT', ip: 'LOCAL', rawLog: t });
+      logs.push({ timestamp: parseSyslog(undefined), format: 'SSH_AUTH', eventType: 'SU_ATTEMPT', computer: su?.[2], ip: 'LOCAL', rawLog: t });
       continue;
     }
     logs.push({ timestamp: new Date(), format: 'SSH_AUTH', eventType: 'UNKNOWN', rawLog: t });
@@ -254,6 +254,7 @@ function parseSysmonXML(content: string): ParsedLog[] {
         return v ? parseInt(v, 10) : undefined;
       })(),
       user: extractData(block, 'User'),
+      targetFilename: extractData(block, 'TargetFilename'),
       rawLog: block.slice(0, 400).trim(),
     });
   }

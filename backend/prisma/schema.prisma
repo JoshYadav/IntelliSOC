@@ -7,46 +7,158 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ── SIEM ──────────────────────────────────────────────────────────────────────
+
 model Session {
-  id        String   @id @default(uuid())
-  fileName  String
-  logFormat String   @default("UNKNOWN")
-  createdAt DateTime @default(now())
-  logs      Log[]
-  alerts    Alert[]
+  id         String    @id @default(uuid())
+  fileName   String
+  logFormat  String    @default("UNKNOWN")
+  createdAt  DateTime  @default(now())
+  incidentId String?   // optional link to auto-created incident
+  logs       Log[]
+  alerts     Alert[]
 }
 
 model Log {
-  id         Int      @id @default(autoincrement())
+  id         Int       @id @default(autoincrement())
   sessionId  String
   rawLog     String
   parsedJson String?
   timestamp  DateTime?
-  session    Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  session    Session   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 
   @@index([sessionId])
 }
 
 model Alert {
-  id          Int      @id @default(autoincrement())
-  sessionId   String
-  type        String   // BRUTE_FORCE | MULTIPLE_USERS | ACCOUNT_COMPROMISE
-  ip          String
-  user        String?
-  severity    String   // LOW | MEDIUM | HIGH | CRITICAL
-  riskScore   Int
-  mitreTactic String?
-  explanation String?
-  reputation  String?  // UNKNOWN | SUSPICIOUS | MALICIOUS
-  count       Int      @default(1)
-  timestamp   DateTime
+  id             Int             @id @default(autoincrement())
+  sessionId      String
+  type           String          // BRUTE_FORCE | MULTIPLE_USERS | ACCOUNT_COMPROMISE | ...
+  ip             String
+  user           String?
+  severity       String          // LOW | MEDIUM | HIGH | CRITICAL
+  riskScore      Int
+  mitreTactic    String?
+  explanation    String?
+  reputation     String?         // UNKNOWN | SUSPICIOUS | MALICIOUS
+  count          Int             @default(1)
+  timestamp      DateTime
+  status         String          @default("NEW")
+  // NEW | ACKNOWLEDGED | FALSE_POSITIVE | ESCALATED | RESOLVED
   // AbuseIPDB enrichment fields
-  abuseScore  Int?     // Confidence score 0-100 from AbuseIPDB
-  country     String?  // ISO country code (e.g. "US", "CN")
-  isp         String?  // Internet Service Provider name
-  session     Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  abuseScore     Int?            // Confidence score 0-100 from AbuseIPDB
+  country        String?         // ISO country code (e.g. "US", "CN")
+  isp            String?         // Internet Service Provider name
+  latitude       Float?
+  longitude      Float?
+  session        Session         @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  incidentAlerts IncidentAlert[]
 
   @@index([sessionId])
   @@index([type])
   @@index([severity])
+  @@index([status])
 }
+
+// ── SOAR ──────────────────────────────────────────────────────────────────────
+
+model Incident {
+  id           String          @id @default(uuid())
+  title        String
+  description  String?
+  status       String          @default("OPEN")
+  // OPEN | IN_PROGRESS | RESOLVED | FALSE_POSITIVE
+  priority     String          @default("MEDIUM")
+  // LOW | MEDIUM | HIGH | CRITICAL
+  assignee     String?
+  aiSummary    String?         // Gemini-generated summary
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  alerts       IncidentAlert[]
+  timeline     IncidentEvent[]
+  playbookRuns PlaybookRun[]
+
+  @@index([status])
+  @@index([priority])
+}
+
+model IncidentAlert {
+  incidentId String
+  alertId    Int
+  incident   Incident @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+  alert      Alert    @relation(fields: [alertId], references: [id], onDelete: Cascade)
+
+  @@id([incidentId, alertId])
+}
+
+model IncidentEvent {
+  id         Int      @id @default(autoincrement())
+  incidentId String
+  type       String
+  // NOTE | STATUS_CHANGE | PLAYBOOK_RUN | ALERT_ADDED | ACTION_APPROVED
+  content    String
+  author     String   @default("system")
+  createdAt  DateTime @default(now())
+  incident   Incident @relation(fields: [incidentId], references: [id], onDelete: Cascade)
+
+  @@index([incidentId])
+}
+
+model Playbook {
+  id          String       @id @default(uuid())
+  name        String
+  description String?
+  trigger     String       // alert type e.g. "BRUTE_FORCE" or "MANUAL"
+  steps       String       // JSON array of PlaybookStep objects
+  enabled     Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+  runs        PlaybookRun[]
+
+  @@index([trigger])
+}
+
+model PlaybookRun {
+  id          String    @id @default(uuid())
+  playbookId  String
+  incidentId  String?
+  status      String    @default("RUNNING")
+  // RUNNING | SUCCESS | FAILED | SKIPPED
+  stepResults String?   // JSON: { stepIndex, status, output }[]
+  startedAt   DateTime  @default(now())
+  finishedAt  DateTime?
+  playbook    Playbook  @relation(fields: [playbookId], references: [id], onDelete: Cascade)
+  incident    Incident? @relation(fields: [incidentId], references: [id])
+
+  @@index([playbookId])
+  @@index([incidentId])
+}
+
+// ── EDR ───────────────────────────────────────────────────────────────────────
+
+model Endpoint {
+  id           String              @id @default(uuid())
+  hostname     String              @unique
+  ip           String?
+  os           String?
+  agentVersion String?
+  status       String              @default("ONLINE")
+  // ONLINE | OFFLINE | ISOLATED
+  lastSeen     DateTime            @default(now())
+  createdAt    DateTime            @default(now())
+  telemetry    EndpointTelemetry[]
+
+  @@index([status])
+}
+
+model EndpointTelemetry {
+  id         Int      @id @default(autoincrement())
+  endpointId String
+  type       String   // PROCESS | NETWORK | FILE | HEARTBEAT
+  data       String   // JSON payload
+  timestamp  DateTime @default(now())
+  endpoint   Endpoint @relation(fields: [endpointId], references: [id], onDelete: Cascade)
+
+  @@index([endpointId, type])
+  @@index([timestamp])
+}
+

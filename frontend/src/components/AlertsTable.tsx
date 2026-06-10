@@ -1,171 +1,140 @@
+import { Clipboard } from 'lucide-react';
 import type { Alert } from '../types';
-import { ShieldCheck, Activity, Globe, User, AlertCircle, Hash, Target, AlignLeft } from 'lucide-react';
 
 interface AlertsTableProps {
   alerts: Alert[];
 }
 
-const severityColors: Record<string, { bg: string; text: string; border: string }> = {
-  CRITICAL: { bg: 'rgba(239, 68, 68, 0.15)', text: '#ef4444', border: 'rgba(239, 68, 68, 0.3)' },
-  HIGH: { bg: 'rgba(249, 115, 22, 0.15)', text: '#f97316', border: 'rgba(249, 115, 22, 0.3)' },
-  MEDIUM: { bg: 'rgba(234, 179, 8, 0.15)', text: '#eab308', border: 'rgba(234, 179, 8, 0.3)' },
-  LOW: { bg: 'rgba(34, 197, 94, 0.15)', text: '#22c55e', border: 'rgba(34, 197, 94, 0.3)' },
+const T = {
+  bg:           "#080d16",
+  surface:      "#0e1623",
+  surfaceHover: "#121d2e",
+  border:       "rgba(255,255,255,0.06)",
+  primary:      "#818cf8",
+  dataText:     "#a5b4fc",
+  text:         "#f1f5f9",
+  textSecondary:"#94a3b8",
+  low:          "#34d399",
 };
 
-const typeLabels: Record<string, { label: string; icon: string }> = {
-  // SSH / Linux
-  BRUTE_FORCE: { label: 'Brute Force', icon: '🔨' },
-  MULTIPLE_USERS: { label: 'Multi-User', icon: '👥' },
-  ACCOUNT_COMPROMISE: { label: 'Compromise', icon: '💀' },
-  SUDO_ABUSE: { label: 'Sudo Abuse', icon: '⚡' },
-  // HTTP
-  HTTP_BRUTE_FORCE: { label: 'HTTP Brute Force', icon: '🌐' },
-  DIRECTORY_SCAN: { label: 'Dir Scan', icon: '📂' },
-  // Windows
-  WINDOWS_BRUTE_FORCE: { label: 'Win Brute Force', icon: '🪟' },
-  PERSISTENCE_DETECTED: { label: 'Persistence', icon: '🔗' },
-  LATERAL_MOVEMENT: { label: 'Lateral Movement', icon: '↔️' },
-  // Sysmon
-  MALWARE_PROCESS_CHAIN: { label: 'Malware Chain', icon: '🦠' },
-  SUSPICIOUS_NETWORK: { label: 'Suspicious Net', icon: '📡' },
-  // Firewall
-  PORT_SCAN: { label: 'Port Scan', icon: '🔍' },
+const copyToClipboard = (text: string) => {
+  navigator.clipboard.writeText(text).catch(() => {});
+  window.dispatchEvent(new CustomEvent('show-toast', { detail: `Copied IP ${text} to clipboard` }));
 };
 
 export default function AlertsTable({ alerts }: AlertsTableProps) {
   if (alerts.length === 0) {
     return (
-      <div className="glass-card flex flex-col items-center justify-center text-center p-12 text-slate-400">
-        <ShieldCheck size={56} className="mb-4 text-emerald-500 opacity-80" />
-        <h3 className="text-xl font-semibold text-slate-200 mb-2">No threats detected 🎉</h3>
-        <p className="text-sm">Your systems are currently secure. We'll notify you if anything suspicious occurs.</p>
+      <div style={{
+        padding: '3rem 1.5rem',
+        textAlign: 'center',
+        background: T.surface,
+        border: `1px solid ${T.border}`,
+        borderRadius: '16px',
+        color: T.textSecondary,
+      }}>
+        <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--text-lg)', fontWeight: 600, color: T.text, marginBottom: '8px' }}>
+          Integrity normal
+        </h3>
+        <p style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--text-sm)' }}>No threat signatures detected in the analyzed sequence.</p>
       </div>
     );
   }
 
-  const thStyle: React.CSSProperties = {
-    padding: '0.85rem 1rem',
-    textAlign: 'left',
-    fontSize: '0.75rem',
-    fontWeight: 700,
-    textTransform: 'uppercase',
-    letterSpacing: '0.08em',
-    color: 'var(--color-text-secondary)',
-    borderBottom: '1px solid var(--color-border)',
-    whiteSpace: 'nowrap',
-  };
-
-  const tdStyle: React.CSSProperties = {
-    padding: '0.75rem 1rem',
-    fontSize: '0.85rem',
-    borderBottom: '1px solid var(--color-border)',
-    verticalAlign: 'top',
+  const getBadgeClass = (severity: string) => {
+    switch (severity?.toUpperCase()) {
+      case 'CRITICAL': return 'badge--critical';
+      case 'HIGH': return 'badge--high';
+      case 'MEDIUM': return 'badge--medium';
+      case 'LOW':
+      default: return 'badge--low';
+    }
   };
 
   return (
-    <div className="glass-card animate-fade-in-up" style={{ overflow: 'hidden' }}>
-      <div className="overflow-x-auto max-h-[600px] overflow-y-auto custom-scrollbar">
-        <table className="w-full border-collapse min-w-[900px] relative text-left">
-          <thead className="sticky top-0 z-10 backdrop-blur-md bg-[#0a0e1a]/80 shadow-sm">
+    <div style={{
+      background: T.surface,
+      border: `1px solid ${T.border}`,
+      borderRadius: '16px',
+      overflow: 'hidden',
+      boxShadow: '0 1px 3px rgba(0,0,0,0.4), 0 8px 24px rgba(0,0,0,0.2)',
+    }}>
+      <div style={{ overflowX: 'auto' }}>
+        <table className="op-table">
+          <thead>
             <tr>
-              <th style={thStyle}><div className="flex items-center gap-2"><Activity size={14} /> Type</div></th>
-              <th style={thStyle}><div className="flex items-center gap-2 text-cyan-400/80"><Globe size={14} /> IP Address</div></th>
-              <th style={thStyle}><div className="flex items-center gap-2"><User size={14} /> User</div></th>
-              <th style={thStyle}><div className="flex items-center gap-2"><AlertCircle size={14} /> Severity</div></th>
-              <th style={thStyle}><div className="flex items-center gap-2"><Hash size={14} /> Risk</div></th>
-              <th style={thStyle}><div className="flex items-center gap-2"><Target size={14} /> MITRE ATT&CK</div></th>
-              <th style={thStyle}><div className="flex items-center gap-2"><Hash size={14} /> Count</div></th>
-              <th style={thStyle}><div className="flex items-center gap-2"><AlignLeft size={14} /> Explanation</div></th>
+              <th>Type</th>
+              <th>Source IP</th>
+              <th>User</th>
+              <th>Severity</th>
+              <th>Risk Score</th>
+              <th>MITRE Tactic</th>
+              <th>Events</th>
+              <th>Analyst Note</th>
             </tr>
           </thead>
           <tbody>
             {alerts.map((alert, index) => {
-              const sev = severityColors[alert.severity] || severityColors.LOW;
-              const typeInfo = typeLabels[alert.type] || { label: alert.type, icon: '⚠️' };
-              const isCritical = alert.severity === 'CRITICAL';
-
               return (
                 <tr
                   key={alert.id}
-                  className="animate-slide-in hover:bg-white/5 even:bg-white/[0.02] transition-colors duration-300 ease-in-out cursor-default"
-                  style={{ animationDelay: `${index * 0.03}s` }}
+                  style={{
+                    animation: 'fadeUp 0.3s ease both',
+                    animationDelay: `${index * 20}ms`,
+                  }}
                 >
-                  <td style={tdStyle}>
-                    <span style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '0.4rem',
-                      padding: '0.3rem 0.6rem',
-                      borderRadius: '6px',
-                      background: 'rgba(59, 130, 246, 0.1)',
-                      fontSize: '0.8rem',
-                      fontWeight: 500,
-                      whiteSpace: 'nowrap',
+                  {/* Type Badge */}
+                  <td>
+                    <span className="badge" style={{
+                      background: 'rgba(129, 140, 248, 0.08)',
+                      color: T.primary,
+                      border: `1px solid rgba(129, 140, 248, 0.2)`
                     }}>
-                      {typeInfo.icon} {typeInfo.label}
+                      {alert.type.replace(/_/g, ' ')}
                     </span>
                   </td>
-                  <td style={{ ...tdStyle, fontFamily: 'monospace', color: 'var(--color-accent-cyan)' }} title={`Source IP: ${alert.ip}`}>
-                    {alert.ip}
+
+                  {/* Source IP (JetBrains Mono T.dataText) */}
+                  <td style={{ fontFamily: 'var(--font-mono)', color: T.dataText, fontWeight: 500 }}>
+                    <span className="copy-ip-container" onClick={() => copyToClipboard(alert.ip)} title="Click to copy IP">
+                      <span>{alert.ip}</span>
+                      <Clipboard size={12} className="copy-ip-icon" />
+                    </span>
                   </td>
-                  <td style={{ ...tdStyle, color: 'var(--color-text-secondary)' }}>
-                    {alert.user || '—'}
+
+                  {/* User */}
+                  <td style={{ color: T.text }}>
+                    {alert.user || 'SYSTEM'}
                   </td>
-                  <td style={tdStyle}>
-                    <span 
-                      className={`inline-block px-3 py-1 rounded-md text-xs font-bold tracking-wider border ${isCritical ? 'animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.4)]' : 'shadow-sm'}`}
-                      style={{
-                        background: sev.bg,
-                        borderColor: sev.border,
-                        color: sev.text,
-                      }}
-                      title={`Severity Level: ${alert.severity}`}
-                    >
+
+                  {/* Severity Pill */}
+                  <td>
+                    <span className={`badge ${getBadgeClass(alert.severity)}`}>
                       {alert.severity}
                     </span>
                   </td>
-                  <td style={tdStyle}>
-                    <div style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.4rem',
-                    }}>
-                      <div style={{
-                        width: '40px',
-                        height: '6px',
-                        borderRadius: '3px',
-                        background: 'rgba(255,255,255,0.08)',
-                        overflow: 'hidden',
-                      }}>
-                        <div style={{
-                          width: `${alert.riskScore}%`,
-                          height: '100%',
-                          borderRadius: '3px',
-                          background: alert.riskScore >= 80
-                            ? 'var(--color-critical)' : alert.riskScore >= 50
-                              ? 'var(--color-high)' : 'var(--color-medium)',
-                          transition: 'width 0.5s ease',
-                        }} />
-                      </div>
-                      <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-text-primary)' }}>
-                        {alert.riskScore}
-                      </span>
-                    </div>
+
+                  {/* Risk Score */}
+                  <td style={{ color: T.text, fontWeight: 600 }}>
+                    {alert.riskScore}
                   </td>
-                  <td style={{ ...tdStyle, fontSize: '0.78rem', color: 'var(--color-accent-violet)' }} title={alert.mitreTactic ? `MITRE Framework Tactic: ${alert.mitreTactic}` : ''}>
+
+                  {/* MITRE Tactic (Inter T.textSecondary) */}
+                  <td style={{ color: T.textSecondary }}>
                     {alert.mitreTactic || '—'}
                   </td>
-                  <td style={{ ...tdStyle, textAlign: 'center', fontWeight: 600 }}>
+
+                  {/* Events count */}
+                  <td style={{ color: T.text, fontWeight: 500 }}>
                     {alert.count}
                   </td>
-                  <td 
-                    title={alert.explanation || 'No explanation provided'}
+
+                  {/* Analyst Note */}
+                  <td
+                    title={alert.explanation || ''}
                     style={{
-                      ...tdStyle,
-                      fontSize: '0.78rem',
-                      color: 'var(--color-text-secondary)',
-                      maxWidth: '300px',
-                      lineHeight: 1.4,
+                      color: T.textSecondary,
+                      maxWidth: '250px',
                       whiteSpace: 'nowrap',
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',

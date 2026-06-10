@@ -3,6 +3,13 @@ import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 import path from 'path';
 import { logRoutes } from './routes/logRoutes';
+import { incidentRoutes } from './routes/incidentRoutes';
+import { playbookRoutes } from './routes/playbookRoutes';
+import { alertRoutes } from './routes/alertRoutes';
+import { edrRoutes } from './routes/edrRoutes';
+import { endpointRoutes } from './routes/endpointRoutes';
+import { correlationRoutes } from './routes/correlationRoutes';
+import { markStaleEndpoints } from './services/endpointService';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -63,6 +70,12 @@ app.use(express.urlencoded({ extended: true }));
 
 // ── Routes ────────────────────────────────────────────────────────────────────
 app.use('/api', logRoutes);
+app.use('/api/incidents', incidentRoutes);
+app.use('/api/playbooks', playbookRoutes);
+app.use('/api/alerts', alertRoutes);
+app.use('/api/edr', edrRoutes);
+app.use('/api/endpoints', endpointRoutes);
+app.use('/api/correlations', correlationRoutes);
 
 // Health check
 app.get('/api/health', (_req, res) => {
@@ -82,6 +95,15 @@ app.use((err: any, _req: express.Request, res: express.Response, _next: express.
 app.listen(PORT, () => {
   console.log(`🚀 IntelliSOC server running on http://localhost:${PORT}`);
   console.log(`🔒 CORS allowed origins: ${allowedOrigins.join(', ')}`);
+
+  // EDR: Periodically mark stale endpoints (every 60 seconds)
+  setInterval(async () => {
+    try {
+      await markStaleEndpoints();
+    } catch (err: any) {
+      console.error('[EDR] Stale endpoints check failed:', err.message);
+    }
+  }, 60 * 1000);
 });
 
 export default app;

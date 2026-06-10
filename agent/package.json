@@ -1,0 +1,16 @@
+{
+  "name": "intellisoc-agent",
+  "version": "1.0.0",
+  "description": "IntelliSOC EDR Agent — Lightweight endpoint telemetry collector",
+  "main": "collector.ts",
+  "scripts": {
+    "start": "ts-node collector.ts",
+    "dev": "ts-node collector.ts"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^22.9.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3"
+  }
+}

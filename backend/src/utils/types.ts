@@ -45,6 +45,7 @@ export type AlertType =
   | 'MULTIPLE_USERS'
   | 'ACCOUNT_COMPROMISE'
   | 'SUDO_ABUSE'
+  | 'HONEYPOT_TARGET'
   // HTTP
   | 'HTTP_BRUTE_FORCE'
   | 'DIRECTORY_SCAN'
@@ -56,7 +57,16 @@ export type AlertType =
   | 'MALWARE_PROCESS_CHAIN'
   | 'SUSPICIOUS_NETWORK'
   // Firewall
-  | 'PORT_SCAN';
+  | 'PORT_SCAN'
+  // EDR
+  | 'LOLBIN_ABUSE'
+  | 'PERSISTENCE_RUN_KEY'
+  | 'SCHEDULED_TASK_PERSIST'
+  | 'CREDENTIAL_DUMPING'
+  | 'RANSOMWARE_BEHAVIOUR'
+  | 'LATERAL_MOVEMENT_PSEXEC'
+  | 'SUSPICIOUS_POWERSHELL'
+  | 'DNS_BEACONING';
 
 // ── Parsed log entry (universal flat structure) ───────────────────────────────
 export interface ParsedLog {
@@ -88,6 +98,7 @@ export interface ParsedLog {
   parentImage?: string;
   destinationIp?: string;
   destinationPort?: number;
+  targetFilename?: string;
 
   // Firewall
   srcIp?: string;
@@ -115,6 +126,8 @@ export interface DetectionAlert {
   abuseScore?: number;
   country?: string | null;
   isp?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
   count: number;
   timestamp: Date;
 }

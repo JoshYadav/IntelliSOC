@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- Outer Hexagon -->
+  <polygon points="16,3 27.25,9.5 27.25,22.5 16,29 4.75,22.5 4.75,9.5" stroke="#818cf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Geometric Eye Shape -->
+  <path d="M 8.5,16 Q 16,10.5 23.5,16 Q 16,21.5 8.5,16 Z" stroke="#818cf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Pupil -->
+  <circle cx="16" cy="16" r="3" stroke="#818cf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Center Target Dot -->
+  <circle cx="16" cy="16" r="0.75" fill="#818cf8"/>
+  
+  <!-- Crosshair Ticks -->
+  <line x1="16" y1="5" x2="16" y2="7.5" stroke="#818cf8" stroke-width="2" stroke-linecap="round"/>
+  <line x1="16" y1="24.5" x2="16" y2="27" stroke="#818cf8" stroke-width="2" stroke-linecap="round"/>
+  <line x1="5" y1="16" x2="7.5" y2="16" stroke="#818cf8" stroke-width="2" stroke-linecap="round"/>
+  <line x1="24.5" y1="16" x2="27" y2="16" stroke="#818cf8" stroke-width="2" stroke-linecap="round"/>
+</svg>

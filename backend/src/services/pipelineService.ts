@@ -7,12 +7,16 @@ import { runFirewallDetection } from './firewallDetectionService';
 import { runCorrelation } from './correlationService';
 import { enrichAlerts } from './enrichmentService';
 import { aggregateAlerts } from './aggregationService';
+import { autoGroupAlerts } from './incidentService';
+import { triggerMatchingPlaybooks } from './playbookService';
+import { upsertEndpoint, storeTelemetry } from './endpointService';
+import { runEdrDetection } from './edrDetectionService';
 import prisma from '../utils/prisma';
 import { AnalyticsData, LogFormat, DetectionAlert } from '../utils/types';
 
 /**
  * Main processing pipeline:
- * Upload → Detect Format → Parse → Detect → Correlate → Enrich → Aggregate → Store
+ * Upload → Detect Format → Parse → Detect → Correlate → Enrich → Aggregate → Store → SOAR
  */
 export async function processLogFile(fileName: string, fileContent: string) {
   // 1. Auto-detect log format
@@ -26,6 +30,88 @@ export async function processLogFile(fileName: string, fileContent: string) {
 
   // 3. Parse log file with detected format
   const parsedLogs = parseLogFile(fileContent, logFormat);
+
+  let edrAlerts: DetectionAlert[] = [];
+  // --- EDR INTEGRATION ---
+  try {
+    const endpointsToUpsert = new Set<string>();
+    for (const log of parsedLogs) {
+      if (log.computer && log.computer !== 'LOCAL') {
+        endpointsToUpsert.add(log.computer);
+      } else if (log.ip && log.ip !== 'LOCAL' && log.ip !== 'UNKNOWN') {
+        endpointsToUpsert.add(log.ip);
+      }
+    }
+
+    // Upsert all discovered endpoints
+    const endpointMap = new Map<string, string>(); // hostname -> endpointId
+    for (const hostname of endpointsToUpsert) {
+      const ep = await upsertEndpoint(hostname);
+      endpointMap.set(hostname, ep.id);
+    }
+
+    if (logFormat === 'SYSMON' || logFormat === 'SSH_AUTH') {
+      const hostTelemetry = new Map<string, { process: any[]; network: any[]; file: any[] }>();
+
+      for (const hostname of endpointsToUpsert) {
+        hostTelemetry.set(hostname, { process: [], network: [], file: [] });
+      }
+
+      for (const log of parsedLogs) {
+        const hostname = log.computer || log.ip || '';
+        const hostData = hostTelemetry.get(hostname);
+        if (!hostData) continue;
+
+        if (log.eventType === 'SYSMON_PROCESS_CREATE') {
+          hostData.process.push({
+            pid: log.processGuid ? parseInt(log.processGuid.replace(/[^0-9]/g, '').slice(0,6) || '0', 10) : 0,
+            name: log.image ? log.image.split('\\').pop() : 'unknown',
+            path: log.image,
+            commandLine: log.commandLine,
+            parentPid: 0
+          });
+        } else if (log.eventType === 'SYSMON_NETWORK_CONNECT') {
+          hostData.network.push({
+            localAddress: '0.0.0.0',
+            localPort: 0,
+            remoteAddress: log.destinationIp || '0.0.0.0',
+            remotePort: log.destinationPort || 0,
+            state: 'ESTABLISHED',
+            pid: log.processGuid ? parseInt(log.processGuid.replace(/[^0-9]/g, '').slice(0,6) || '0', 10) : 0,
+          });
+        } else if (log.eventType === 'SYSMON_FILE_CREATE') {
+          hostData.file.push({
+            path: log.targetFilename || log.image || 'unknown',
+            operation: 'CREATE'
+          });
+        }
+      }
+
+      for (const [hostname, data] of hostTelemetry) {
+        const endpointId = endpointMap.get(hostname);
+        if (!endpointId) continue;
+
+        if (data.process.length > 0) {
+          await storeTelemetry(endpointId, 'PROCESS', data.process);
+          const alerts = await runEdrDetection(hostname, 'PROCESS', data.process, false);
+          edrAlerts.push(...alerts.map(a => ({ ...a, ip: a.hostname, user: undefined, timestamp: new Date() } as DetectionAlert)));
+        }
+        if (data.network.length > 0) {
+          await storeTelemetry(endpointId, 'NETWORK', data.network);
+          const alerts = await runEdrDetection(hostname, 'NETWORK', data.network, false);
+          edrAlerts.push(...alerts.map(a => ({ ...a, ip: a.hostname, user: undefined, timestamp: new Date() } as DetectionAlert)));
+        }
+        if (data.file.length > 0) {
+          await storeTelemetry(endpointId, 'FILE', data.file);
+          const alerts = await runEdrDetection(hostname, 'FILE', data.file, false);
+          edrAlerts.push(...alerts.map(a => ({ ...a, ip: a.hostname, user: undefined, timestamp: new Date() } as DetectionAlert)));
+        }
+      }
+    }
+  } catch (err: any) {
+    console.error('[Pipeline] EDR integration error:', err.message);
+  }
+  // --- END EDR INTEGRATION ---
 
   // 4. Store parsed logs in DB
   if (parsedLogs.length > 0) {
@@ -93,7 +179,7 @@ export async function processLogFile(fileName: string, fileContent: string) {
   const correlationAlerts = runCorrelation(parsedLogs);
 
   // 7. Combine all alerts
-  const allAlerts = [...detectionAlerts, ...correlationAlerts];
+  const allAlerts = [...detectionAlerts, ...correlationAlerts, ...edrAlerts];
 
   // 8. Aggregate duplicates
   const aggregatedAlerts = aggregateAlerts(allAlerts);
@@ -120,8 +206,36 @@ export async function processLogFile(fileName: string, fileContent: string) {
         abuseScore: alert.abuseScore ?? null,
         country: alert.country ?? null,
         isp: alert.isp ?? null,
+        latitude: alert.latitude ?? null,
+        longitude: alert.longitude ?? null,
       })),
     });
+  }
+
+  // 11. SOAR Integration — auto-create incidents and trigger playbooks
+  let incidentsCreated = 0;
+  let incidentId: string | null = null;
+  if (enrichedAlerts.length > 0) {
+    try {
+      const incidentIds = await autoGroupAlerts(session.id);
+      incidentsCreated = incidentIds.length;
+      if (incidentIds.length > 0) {
+        incidentId = incidentIds[0];
+      }
+
+      // Trigger matching playbooks for each unique alert type in this session
+      const alertTypes = [...new Set(enrichedAlerts.map((a) => a.type))];
+      for (const incidentId of incidentIds) {
+        for (const alertType of alertTypes) {
+          await triggerMatchingPlaybooks(alertType, incidentId).catch((err) => {
+            console.error(`[Pipeline] Playbook trigger failed for ${alertType}:`, err.message);
+          });
+        }
+      }
+    } catch (err: any) {
+      // SOAR failures should not break the core pipeline
+      console.error('[Pipeline] SOAR integration error (non-fatal):', err.message);
+    }
   }
 
   return {
@@ -129,6 +243,8 @@ export async function processLogFile(fileName: string, fileContent: string) {
     logFormat,
     logsProcessed: parsedLogs.length,
     alertsGenerated: enrichedAlerts.length,
+    incidentsCreated,
+    incidentId,
   };
 }
 

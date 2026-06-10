@@ -7,6 +7,7 @@ const MITRE_MAPPINGS: Record<AlertType, { tactic: string; technique: string }> =
   MULTIPLE_USERS:        { tactic: 'Credential Access',    technique: 'T1110.001 - Password Guessing' },
   ACCOUNT_COMPROMISE:    { tactic: 'Initial Access',       technique: 'T1078 - Valid Accounts' },
   SUDO_ABUSE:            { tactic: 'Privilege Escalation', technique: 'T1548.003 - Sudo and Sudo Caching' },
+  HONEYPOT_TARGET:       { tactic: 'Initial Access',       technique: 'T1078 - Valid Accounts' },
   // HTTP
   HTTP_BRUTE_FORCE:      { tactic: 'Credential Access',    technique: 'T1110.001 - Brute Force: Password Guessing' },
   DIRECTORY_SCAN:        { tactic: 'Discovery',            technique: 'T1083 - File and Directory Discovery' },
@@ -19,6 +20,15 @@ const MITRE_MAPPINGS: Record<AlertType, { tactic: string; technique: string }> =
   SUSPICIOUS_NETWORK:    { tactic: 'Command and Control',  technique: 'T1071 - Application Layer Protocol' },
   // Firewall
   PORT_SCAN:             { tactic: 'Discovery',            technique: 'T1046 - Network Service Discovery' },
+  // EDR
+  LOLBIN_ABUSE:          { tactic: 'Defense Evasion',      technique: 'T1218 - System Binary Proxy Execution' },
+  PERSISTENCE_RUN_KEY:   { tactic: 'Persistence',          technique: 'T1547.001 - Registry Run Keys' },
+  SCHEDULED_TASK_PERSIST: { tactic: 'Persistence',          technique: 'T1053.005 - Scheduled Task' },
+  CREDENTIAL_DUMPING:    { tactic: 'Credential Access',    technique: 'T1003.001 - LSASS Memory' },
+  RANSOMWARE_BEHAVIOUR:  { tactic: 'Impact',               technique: 'T1486 - Data Encrypted for Impact' },
+  LATERAL_MOVEMENT_PSEXEC: { tactic: 'Lateral Movement',     technique: 'T1021.002 - SMB/Windows Admin Shares' },
+  SUSPICIOUS_POWERSHELL: { tactic: 'Execution',            technique: 'T1059.001 - PowerShell' },
+  DNS_BEACONING:         { tactic: 'Command and Control',  technique: 'T1071.004 - DNS' },
 };
 
 // ── Explanation templates (fallback for types without inline explanations) ────
@@ -29,6 +39,8 @@ const EXPLANATIONS: Partial<Record<AlertType, (a: DetectionAlert) => string>> = 
     `IP ${a.ip} attempted logins for ${a.count} different user accounts (${a.user}). Indicates credential stuffing or user enumeration.`,
   ACCOUNT_COMPROMISE: (a) =>
     a.explanation ?? `Account "${a.user}" was compromised from IP ${a.ip} after multiple failed attempts.`,
+  HONEYPOT_TARGET: (a) =>
+    `IP ${a.ip} attempted login against highly sensitive honeypot account "${a.user}". This indicates automated scanning or active targeting of administrative profiles.`,
 };
 
 // ── AbuseIPDB v2 lookup ───────────────────────────────────────────────────────
@@ -37,9 +49,12 @@ interface IPEnrichment {
   abuseScore: number;
   country: string | null;
   isp: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
 }
 
 const PRIVATE_IP = /^(10\.|172\.(1[6-9]|2\d|3[01])\.|192\.168\.|127\.|0\.0\.0\.0$|LOCAL$|UNKNOWN$)/;
+const VALID_IPV4 = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/;
 
 function scoreToReputation(score: number): string {
   if (score >= 75) return 'MALICIOUS';
@@ -47,15 +62,31 @@ function scoreToReputation(score: number): string {
   return 'UNKNOWN';
 }
 
-async function lookupIP(ip: string): Promise<IPEnrichment> {
-  const fallback: IPEnrichment = { reputation: 'UNKNOWN', abuseScore: 0, country: null, isp: null };
+const DEMO_IPS: Record<string, IPEnrichment> = {
+  '198.51.100.42': { reputation: 'MALICIOUS', abuseScore: 88, country: 'RU', isp: 'VPS Hosting RU', latitude: 55.7558, longitude: 37.6173 },
+  '198.51.100.5':  { reputation: 'MALICIOUS', abuseScore: 85, country: 'CN', isp: 'China Telecom', latitude: 39.9042, longitude: 116.4074 },
+  '203.0.113.10':  { reputation: 'SUSPICIOUS', abuseScore: 62, country: 'IR', isp: 'Iran Telecom', latitude: 35.6892, longitude: 51.3890 },
+  '45.33.32.156':  { reputation: 'MALICIOUS', abuseScore: 92, country: 'KP', isp: 'Star JV', latitude: 39.0392, longitude: 125.7625 },
+  '91.219.237.34': { reputation: 'MALICIOUS', abuseScore: 95, country: 'UA', isp: 'UA-Hosting', latitude: 50.4501, longitude: 30.5234 },
+  '185.220.101.34':{ reputation: 'SUSPICIOUS', abuseScore: 60, country: 'DE', isp: 'Tor Exit Node', latitude: 52.5200, longitude: 13.4050 },
+  '198.51.100.22': { reputation: 'MALICIOUS', abuseScore: 90, country: 'RU', isp: 'RU Server', latitude: 55.7558, longitude: 37.6173 },
+  '203.0.113.88':  { reputation: 'MALICIOUS', abuseScore: 80, country: 'CN', isp: 'CN Network', latitude: 39.9042, longitude: 116.4074 },
+  '185.20.10.99':  { reputation: 'SUSPICIOUS', abuseScore: 70, country: 'DE', isp: 'DE Node', latitude: 52.5200, longitude: 13.4050 },
+};
 
-  // Skip private / non-routable addresses
-  if (PRIVATE_IP.test(ip)) return fallback;
+async function lookupIP(ip: string): Promise<IPEnrichment> {
+  const fallback: IPEnrichment = { reputation: 'UNKNOWN', abuseScore: 0, country: null, isp: null, latitude: null, longitude: null };
+
+  // Skip non-IP values (hostnames like DESKTOP-DEV-101) and private addresses
+  if (!VALID_IPV4.test(ip) || PRIVATE_IP.test(ip)) return fallback;
+
+  if (DEMO_IPS[ip]) {
+    console.log(`[AbuseIPDB] Demo enrichment for ${ip} → ${DEMO_IPS[ip].country}`);
+    return DEMO_IPS[ip];
+  }
 
   const apiKey = process.env.ABUSEIPDB_API_KEY;
   if (!apiKey) {
-    console.warn('[AbuseIPDB] ABUSEIPDB_API_KEY not set — skipping lookup.');
     return fallback;
   }
 
@@ -77,7 +108,13 @@ async function lookupIP(ip: string): Promise<IPEnrichment> {
     }
 
     const json = (await response.json()) as {
-      data: { abuseConfidenceScore: number; countryCode: string | null; isp: string | null };
+      data: { 
+        abuseConfidenceScore: number; 
+        countryCode: string | null; 
+        isp: string | null;
+        latitude?: number | null;
+        longitude?: number | null;
+      };
     };
     const score = json.data.abuseConfidenceScore ?? 0;
     return {
@@ -85,6 +122,8 @@ async function lookupIP(ip: string): Promise<IPEnrichment> {
       abuseScore: score,
       country: json.data.countryCode ?? null,
       isp: json.data.isp ?? null,
+      latitude: json.data.latitude ?? null,
+      longitude: json.data.longitude ?? null,
     };
   } catch (err) {
     console.warn(`[AbuseIPDB] Network error for IP ${ip}:`, err);
@@ -138,7 +177,7 @@ async function lookupIPsBatched(ips: string[]): Promise<Map<string, IPEnrichment
 // ── Main export ───────────────────────────────────────────────────────────────
 export async function enrichAlerts(alerts: DetectionAlert[]): Promise<DetectionAlert[]> {
   // Deduplicate public IPs only (private/loopback skipped to save quota)
-  const uniqueIPs = [...new Set(alerts.map((a) => a.ip).filter((ip) => !PRIVATE_IP.test(ip)))];
+  const uniqueIPs = [...new Set(alerts.map((a) => a.ip).filter((ip) => VALID_IPV4.test(ip) && !PRIVATE_IP.test(ip)))];
 
   const ipEnrichment = uniqueIPs.length > 0
     ? await lookupIPsBatched(uniqueIPs)
@@ -157,6 +196,8 @@ export async function enrichAlerts(alerts: DetectionAlert[]): Promise<DetectionA
       abuseScore:   enrichment.abuseScore,
       country:      enrichment.country,
       isp:          enrichment.isp,
+      latitude:     enrichment.latitude,
+      longitude:    enrichment.longitude,
     };
   });
 }

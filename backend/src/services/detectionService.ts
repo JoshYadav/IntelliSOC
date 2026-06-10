@@ -84,11 +84,43 @@ function detectSudoAbuse(logs: ParsedLog[]): DetectionAlert[] {
   return alerts;
 }
 
+// ── SSH Honeypot Usernames ───────────────────────────────────────────────────
+function detectHoneypotAttempts(logs: ParsedLog[]): DetectionAlert[] {
+  const alerts: DetectionAlert[] = [];
+  const HONEYPOT_USERNAMES = ['root', 'admin', 'administrator', 'guest', 'support', 'test'];
+
+  for (const log of logs) {
+    if (log.eventType === 'LOGIN_FAILED' && log.user && log.ip) {
+      const usernameLower = log.user.toLowerCase();
+      if (HONEYPOT_USERNAMES.includes(usernameLower)) {
+        const exists = alerts.find(a => a.ip === log.ip && a.user === log.user && a.type === 'HONEYPOT_TARGET');
+        if (exists) {
+          exists.count++;
+          exists.timestamp = log.timestamp > exists.timestamp ? log.timestamp : exists.timestamp;
+        } else {
+          alerts.push({
+            type: 'HONEYPOT_TARGET',
+            ip: log.ip,
+            user: log.user,
+            severity: 'HIGH',
+            riskScore: 75,
+            count: 1,
+            timestamp: log.timestamp,
+            explanation: `Login attempt against honeypot account "${log.user}" from IP ${log.ip}. This indicates automated scanning or unauthorized credential targeting.`,
+          });
+        }
+      }
+    }
+  }
+  return alerts;
+}
+
 export function runDetection(logs: ParsedLog[]): DetectionAlert[] {
   return [
     ...detectBruteForce(logs),
     ...detectMultipleUsers(logs),
     ...detectSudoAbuse(logs),
+    ...detectHoneypotAttempts(logs),
   ];
 }
 

@@ -10,100 +10,75 @@ interface FiltersProps {
 const severities = ['ALL', 'CRITICAL', 'HIGH', 'MEDIUM', 'LOW'];
 const attackTypes = [
   'ALL',
-  // SSH / Linux
   'BRUTE_FORCE', 'MULTIPLE_USERS', 'ACCOUNT_COMPROMISE', 'SUDO_ABUSE',
-  // HTTP
   'HTTP_BRUTE_FORCE', 'DIRECTORY_SCAN',
-  // Windows
   'WINDOWS_BRUTE_FORCE', 'PERSISTENCE_DETECTED', 'LATERAL_MOVEMENT',
-  // Sysmon
   'MALWARE_PROCESS_CHAIN', 'SUSPICIOUS_NETWORK',
-  // Firewall
   'PORT_SCAN',
 ];
 
-const selectStyle: React.CSSProperties = {
-  padding: '0.6rem 1rem',
-  paddingLeft: '2.5rem',
-  borderRadius: 'var(--radius-sm)',
-  border: '1px solid var(--color-border)',
-  background: 'var(--color-bg-input)',
-  color: 'var(--color-text-primary)',
-  fontSize: '0.85rem',
-  fontFamily: 'inherit',
-  cursor: 'pointer',
-  outline: 'none',
-  minWidth: '180px',
-  appearance: 'none' as const,
-  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 8L1 3h10z'/%3E%3C/svg%3E")`,
-  backgroundRepeat: 'no-repeat',
-  backgroundPosition: 'right 0.75rem center',
-  paddingRight: '2rem',
+const T = {
+  textSecondary: "#94a3b8",
 };
 
 export default function Filters({ severityFilter, typeFilter, onSeverityChange, onTypeChange }: FiltersProps) {
   return (
     <div style={{
       display: 'flex',
-      gap: '1rem',
-      marginBottom: '1rem',
-      flexWrap: 'wrap',
+      gap: '12px',
       alignItems: 'center',
+      flexWrap: 'wrap',
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', position: 'relative' }}>
-        <label style={{
-          fontSize: '0.8rem',
-          fontWeight: 600,
-          color: 'var(--color-text-secondary)',
-          textTransform: 'uppercase',
-          letterSpacing: '0.05em',
-        }}>
-          Severity
-        </label>
-        <div className="relative isolate group">
-          <Filter size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 z-10 pointer-events-none group-hover:text-amber-500 transition-colors" />
-          <select
-            id="severity-filter"
-            value={severityFilter}
-            onChange={(e) => onSeverityChange(e.target.value)}
-            style={selectStyle}
-            className="hover:border-amber-500/50 hover:bg-slate-800/80 transition-all duration-300 relative z-0"
-          >
-            {severities.map((s) => (
-              <option key={s} value={s} style={{ background: 'var(--color-bg-secondary)' }}>
-                {s === 'ALL' ? 'All Severities' : s}
+      {/* Severity Filter */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', position: 'relative' }}>
+        <Filter size={14} style={{ color: T.textSecondary }} />
+        <select
+          id="severity-filter"
+          value={severityFilter}
+          onChange={(e) => onSeverityChange(e.target.value)}
+          className="op-select"
+          style={{
+            minWidth: '160px',
+            height: '40px',
+            fontSize: 'var(--text-sm)',
+            borderRadius: '8px',
+          }}
+        >
+          {severities.map((s) => {
+            const label = s === 'ALL' ? 'Severity: All' : `Severity: ${s.charAt(0).toUpperCase() + s.slice(1).toLowerCase()}`;
+            return (
+              <option key={s} value={s}>
+                {label}
               </option>
-            ))}
-          </select>
-        </div>
+            );
+          })}
+        </select>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', position: 'relative' }}>
-        <label style={{
-          fontSize: '0.8rem',
-          fontWeight: 600,
-          color: 'var(--color-text-secondary)',
-          textTransform: 'uppercase',
-          letterSpacing: '0.05em',
-        }}>
-          Attack Type
-        </label>
-        <div className="relative isolate group">
-          <Activity size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 z-10 pointer-events-none group-hover:text-blue-500 transition-colors" />
-          <select
-            id="type-filter"
-            value={typeFilter}
-            onChange={(e) => onTypeChange(e.target.value)}
-            style={selectStyle}
-            className="hover:border-blue-500/50 hover:bg-slate-800/80 transition-all duration-300 relative z-0"
-          >
-            {attackTypes.map((t) => (
-              <option key={t} value={t} style={{ background: 'var(--color-bg-secondary)' }}>
-                {t === 'ALL' ? 'All Types' : t.replace(/_/g, ' ')}
+      {/* Type Filter */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', position: 'relative' }}>
+        <Activity size={14} style={{ color: T.textSecondary }} />
+        <select
+          id="type-filter"
+          value={typeFilter}
+          onChange={(e) => onTypeChange(e.target.value)}
+          className="op-select"
+          style={{
+            minWidth: '200px',
+            height: '40px',
+            fontSize: 'var(--text-sm)',
+            borderRadius: '8px',
+          }}
+        >
+          {attackTypes.map((t) => {
+            const label = t === 'ALL' ? 'Signature: All' : `Sig: ${t.replace(/_/g, ' ').split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ')}`;
+            return (
+              <option key={t} value={t}>
+                {label}
               </option>
-            ))}
-          </select>
-        </div>
+            );
+          })}
+        </select>
       </div>
     </div>
   );

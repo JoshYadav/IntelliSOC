@@ -1,9 +1,22 @@
-import { useState, useRef, useCallback } from 'react';
-import { UploadCloud, Lock, Loader2, AlertCircle } from 'lucide-react';
+import React, { useState, useRef, useCallback } from 'react';
+import { Shield, Loader2, AlertTriangle } from 'lucide-react';
 
 interface FileUploadProps {
-  onUploadSuccess: (sessionId: string, logsProcessed: number, alertsGenerated: number, logFormat: string) => void;
+  onUploadSuccess: (sessionId: string, logsProcessed: number, alertsGenerated: number, logFormat: string, incidentId?: string | null) => void;
 }
+
+const T = {
+  bg:           "#080d16",
+  surface:      "#0e1623",
+  surfaceHover: "#121d2e",
+  border:       "rgba(255,255,255,0.06)",
+  borderHover:  "rgba(255,255,255,0.11)",
+  primary:      "#818cf8",
+  primaryDim:   "rgba(129,140,248,0.12)",
+  critical:     "#fb7185",
+  text:         "#f1f5f9",
+  textSecondary:"#94a3b8",
+};
 
 export default function FileUpload({ onUploadSuccess }: FileUploadProps) {
   const [isDragging, setIsDragging] = useState(false);
@@ -15,7 +28,7 @@ export default function FileUpload({ onUploadSuccess }: FileUploadProps) {
   const handleFile = useCallback(async (file: File) => {
     const ext = file.name.split('.').pop()?.toLowerCase();
     if (!['log', 'txt', 'xml', 'csv', 'evtx'].includes(ext || '')) {
-      setError('Supported formats: .log, .txt, .xml, .csv, .evtx');
+      setError('Unsupported format: Only .log, .txt, .xml, .csv, or .evtx supported.');
       return;
     }
 
@@ -41,17 +54,21 @@ export default function FileUpload({ onUploadSuccess }: FileUploadProps) {
           if (xhr.status >= 200 && xhr.status < 300) {
             resolve(JSON.parse(xhr.responseText));
           } else {
-            reject(new Error(JSON.parse(xhr.responseText).error || 'Upload failed'));
+            let errMsg = 'Ingestion failed';
+            try {
+              errMsg = JSON.parse(xhr.responseText).error || errMsg;
+            } catch (e) {}
+            reject(new Error(errMsg));
           }
         };
-        xhr.onerror = () => reject(new Error('Network error'));
+        xhr.onerror = () => reject(new Error('Network error during upload'));
         xhr.send(formData);
       });
 
       setUploadProgress(100);
-      onUploadSuccess(result.sessionId, result.logsProcessed, result.alertsGenerated, result.logFormat ?? 'UNKNOWN');
+      onUploadSuccess(result.sessionId, result.logsProcessed, result.alertsGenerated, result.logFormat ?? 'UNKNOWN', result.incidentId);
     } catch (err: any) {
-      setError(err.message || 'Failed to upload file');
+      setError(err.message || 'Ingestion failure occurred.');
     } finally {
       setTimeout(() => {
         setIsUploading(false);
@@ -59,6 +76,11 @@ export default function FileUpload({ onUploadSuccess }: FileUploadProps) {
       }, 1000);
     }
   }, [onUploadSuccess]);
+
+  const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) handleFile(file);
+  }, [handleFile]);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -77,113 +99,144 @@ export default function FileUpload({ onUploadSuccess }: FileUploadProps) {
   }, []);
 
   return (
-    <div className="animate-fade-in-up" style={{ marginBottom: '2rem' }}>
+    <div style={{ marginBottom: '3rem' }}>
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileChange}
+        accept=".log,.txt,.xml,.csv,.evtx"
+        style={{ display: 'none' }}
+      />
       <div
         id="file-upload-zone"
-        className="glass-card hover:scale-[1.01] hover:shadow-2xl transition-all duration-300 ease-in-out"
         onClick={() => fileInputRef.current?.click()}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         style={{
           position: 'relative',
-          padding: '3.5rem 2rem',
-          borderRadius: 'var(--radius)',
-          border: `2px dashed ${isDragging ? 'var(--color-accent-cyan)' : 'var(--color-border-hover)'}`,
-          background: isDragging
-            ? 'rgba(6, 182, 212, 0.05)'
-            : 'var(--color-bg-card)',
+          padding: '64px 24px',
+          borderRadius: '16px',
+          border: `1px dashed ${isDragging ? T.primary : T.border}`,
+          background: isDragging ? T.primaryDim : T.surface,
           cursor: 'pointer',
           textAlign: 'center',
           overflow: 'hidden',
+          transition: 'all 0.2s ease',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.borderColor = T.primary;
+          e.currentTarget.style.background = T.surfaceHover;
+        }}
+        onMouseLeave={(e) => {
+          if (!isDragging) {
+            e.currentTarget.style.borderColor = T.border;
+            e.currentTarget.style.background = T.surface;
+          }
         }}
       >
-        {/* Progress bar overlay */}
         {isUploading && (
           <div
             style={{
               position: 'absolute',
               bottom: 0,
               left: 0,
-              height: '4px',
+              height: '3px',
               width: `${uploadProgress}%`,
-              background: 'var(--gradient-primary)',
-              transition: 'width 0.3s ease',
-              borderRadius: '0 2px 2px 0',
+              background: T.primary,
+              transition: 'width 0.1s ease',
             }}
           />
         )}
 
-        {/* Upload icon */}
         <div style={{
-          marginBottom: '1.25rem',
+          marginBottom: '1rem',
           display: 'flex',
           justifyContent: 'center',
-          filter: isDragging ? 'drop-shadow(0 0 15px rgba(6, 182, 212, 0.6))' : 'drop-shadow(0 0 5px rgba(255, 255, 255, 0.05))',
-          color: isDragging ? 'var(--color-accent-cyan)' : 'var(--color-text-secondary)',
-          transition: 'all 0.3s ease',
         }}>
           {isUploading ? (
-            <Loader2 size={56} className="animate-spin text-blue-500" />
-          ) : isDragging ? (
-            <UploadCloud size={64} className="scale-110 transition-transform text-cyan-400" />
+            <Loader2 size={40} className="animate-spin" style={{ color: T.primary }} />
           ) : (
-            <Lock size={56} />
+            <Shield size={40} style={{ color: T.primary }} />
           )}
         </div>
 
         <h3 style={{
-          fontSize: '1.2rem',
+          fontFamily: 'var(--font-display)',
+          fontSize: '20px',
           fontWeight: 600,
-          color: 'var(--color-text-primary)',
-          marginBottom: '0.5rem',
+          color: T.text,
+          marginBottom: '8px',
         }}>
-          {isUploading
-            ? `Processing logs... ${uploadProgress}%`
-            : isDragging
-              ? 'Drop your log file here'
-              : 'Upload System Log File'
-          }
+          Load threat data
         </h3>
 
         <p style={{
-          fontSize: '0.875rem',
-          color: 'var(--color-text-secondary)',
+          fontFamily: 'var(--font-display)',
+          fontSize: '14px',
+          fontWeight: 400,
+          color: T.textSecondary,
+          marginBottom: '8px',
         }}>
-          {isUploading
-            ? 'Analyzing for cyber threats...'
-            : 'Drag & drop a log file (.log, .txt, .xml, .csv) or click to browse'
-          }
+          Drag and drop log files or click to browse — .log, .txt, .csv, .xml, .evtx
         </p>
 
+        <p style={{
+          fontFamily: 'var(--font-display)',
+          fontSize: '12.5px',
+          fontWeight: 400,
+          color: T.textSecondary,
+          opacity: 0.8,
+          marginBottom: '24px',
+          marginTop: '0px',
+        }}>
+          Load system audit logs or EDR event streams to see threat detections, kill-chain reconstruction, and automated SOAR response workflows.
+        </p>
+
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            fileInputRef.current?.click();
+          }}
+          style={{
+            background: T.primaryDim,
+            border: `1px solid ${T.primary}`,
+            color: T.primary,
+            borderRadius: '10px',
+            padding: '10px 20px',
+            fontFamily: 'var(--font-display)',
+            fontWeight: 500,
+            fontSize: '14px',
+            cursor: 'pointer',
+            transition: 'background-color 0.15s ease',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = 'rgba(129, 140, 248, 0.2)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = T.primaryDim;
+          }}
+        >
+          Browse Files
+        </button>
+
         {error && (
-          <p style={{
+          <div style={{
             marginTop: '1.25rem',
-            padding: '0.75rem 1rem',
-            background: 'rgba(239, 68, 68, 0.1)',
-            border: '1px solid rgba(239, 68, 68, 0.3)',
-            borderRadius: 'var(--radius-sm)',
-            color: 'var(--color-critical)',
-            fontSize: '0.85rem',
+            padding: '8px 16px',
+            background: 'rgba(251, 113, 133, 0.08)',
+            border: `1px solid rgba(251, 113, 133, 0.25)`,
+            borderRadius: '8px',
+            color: T.critical,
+            fontSize: '13px',
+            fontFamily: 'var(--font-display)',
             display: 'inline-flex',
             alignItems: 'center',
-            gap: '0.5rem',
-            margin: '1.25rem auto 0 auto',
+            gap: '8px',
           }}>
-            <AlertCircle size={16} /> {error}
-          </p>
+            <AlertTriangle size={14} /> {error}
+          </div>
         )}
-
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept=".log,.txt,.xml,.csv,.evtx"
-          onChange={(e) => {
-            const file = e.target.files?.[0];
-            if (file) handleFile(file);
-          }}
-          style={{ display: 'none' }}
-        />
       </div>
     </div>
   );

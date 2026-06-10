@@ -117,6 +117,7 @@ router.post('/logs/upload', upload.single('logfile'), async (req: Request, res: 
       logFormat: result.logFormat,
       logsProcessed: result.logsProcessed,
       alertsGenerated: result.alertsGenerated,
+      incidentId: result.incidentId,
     });
   } catch (err: any) {
     // Handle multer-specific errors with user-friendly messages
@@ -219,7 +220,7 @@ router.get('/session/:id/report', validateSessionId, async (req: Request, res: R
     const csvHeaders = [
       'Timestamp', 'Type', 'Severity', 'Risk Score', 'IP', 'User',
       'Count', 'MITRE Tactic', 'Explanation', 'Reputation',
-      'Abuse Score', 'Country', 'ISP',
+      'Abuse Score', 'Country', 'ISP', 'Latitude', 'Longitude',
     ];
 
     const escapeCsv = (val: unknown): string => {
@@ -236,6 +237,7 @@ router.get('/session/:id/report', validateSessionId, async (req: Request, res: R
         a.type, a.severity, a.riskScore, a.ip, a.user,
         a.count, a.mitreTactic, a.explanation, a.reputation,
         a.abuseScore ?? '', a.country ?? '', a.isp ?? '',
+        a.latitude ?? '', a.longitude ?? '',
       ]
         .map(escapeCsv)
         .join(',')

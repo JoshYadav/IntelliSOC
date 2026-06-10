@@ -1,6 +1,13 @@
 node_modules
 build
 .prisma
+dist
+dist-ssr
+backend/dist
+frontend/dist
+agent/watch_temp
+agent/watch_temp/*
+
 
 # Environment files — never commit secrets
 .env
