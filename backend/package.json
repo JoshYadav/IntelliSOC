@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "node --env-file=.env -r ts-node/register src/server.ts",
     "build": "tsc",
-    "start": "node --env-file=.env dist/server.js",
+    "start": "node dist/server.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev --name init",
     "db:seed": "node --env-file=.env -r ts-node/register prisma/seed.ts"

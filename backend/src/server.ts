@@ -14,33 +14,12 @@ import { markStaleEndpoints } from './services/endpointService';
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// ── CORS — restrict to explicit origin whitelist ──────────────────────────────
-// Set ALLOWED_ORIGINS in .env as a comma-separated list, e.g.:
-//   ALLOWED_ORIGINS="http://localhost:5173,https://intellisoc.example.com"
-const rawOrigins = process.env.ALLOWED_ORIGINS ?? 'http://localhost:5173';
-const allowedOrigins = rawOrigins
-  .split(',')
-  .map((o) => o.trim())
-  .filter(Boolean);
-
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      // Allow server-to-server / curl (no Origin header) only in dev
-      if (!origin) {
-        if (process.env.NODE_ENV === 'production') {
-          return callback(new Error('Origin required in production'), false);
-        }
-        return callback(null, true);
-      }
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-      return callback(new Error(`CORS: origin '${origin}' not allowed`), false);
-    },
-    credentials: true,
-  })
-);
+app.use(cors({
+  origin: process.env.ALLOWED_ORIGINS 
+    ? process.env.ALLOWED_ORIGINS.split(",") 
+    : "*",
+  credentials: true,
+}));
 
 // ── Rate limiting ─────────────────────────────────────────────────────────────
 // General API limit: 200 requests per 15 minutes per IP
@@ -94,7 +73,7 @@ app.use((err: any, _req: express.Request, res: express.Response, _next: express.
 
 app.listen(PORT, () => {
   console.log(`🚀 IntelliSOC server running on http://localhost:${PORT}`);
-  console.log(`🔒 CORS allowed origins: ${allowedOrigins.join(', ')}`);
+  console.log(`🔒 CORS allowed origins: ${process.env.ALLOWED_ORIGINS || '*'}`);
 
   // EDR: Periodically mark stale endpoints (every 60 seconds)
   setInterval(async () => {

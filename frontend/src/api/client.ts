@@ -1,8 +1,10 @@
 import axios from 'axios';
 import type { UploadResponse, Alert, AnalyticsData, Session, Incident, Playbook, PlaybookStep, Endpoint, EndpointTelemetry, CorrelationData } from '../types';
 
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: `${API_BASE}/api`,
   headers: { 'Content-Type': 'application/json' },
 });
 
@@ -43,7 +45,7 @@ export async function getAnalytics(sessionId: string): Promise<AnalyticsData> {
 export async function downloadReport(sessionId: string): Promise<void> {
   console.log('Triggering strict blob download for session:', sessionId);
   const cacheBuster = Date.now();
-  const response = await fetch(`/api/session/${sessionId}/report?_t=${cacheBuster}`);
+  const response = await fetch(`${API_BASE}/api/session/${sessionId}/report?_t=${cacheBuster}`);
   if (!response.ok) {
     throw new Error('Failed to fetch report');
   }
