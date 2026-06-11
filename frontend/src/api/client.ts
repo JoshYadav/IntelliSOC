@@ -2,6 +2,7 @@ import axios from 'axios';
 import type { UploadResponse, Alert, AnalyticsData, Session, Incident, Playbook, PlaybookStep, Endpoint, EndpointTelemetry, CorrelationData } from '../types';
 
 const API_BASE = "https://intellisoc-9vgd.onrender.com";
+(window as any).__API_BASE__ = API_BASE;
 console.log("API_BASE is:", API_BASE);
 
 const api = axios.create({
