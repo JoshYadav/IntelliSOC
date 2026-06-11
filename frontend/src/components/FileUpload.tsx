@@ -41,7 +41,7 @@ export default function FileUpload({ onUploadSuccess }: FileUploadProps) {
       formData.append('logfile', file);
 
       const xhr = new XMLHttpRequest();
-      xhr.open('POST', '/api/logs/upload');
+      xhr.open('POST', 'https://intellisoc-9vgd.onrender.com/api/logs/upload');
 
       xhr.upload.onprogress = (e) => {
         if (e.lengthComputable) {
