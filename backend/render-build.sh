@@ -10,7 +10,4 @@ npm run build
 echo "Running Prisma migrations..."
 npx prisma migrate deploy
 
-echo "Seeding database..."
-npm run db:seed
-
-echo "Done."
+echo "Build complete. Skipping seed on deploy."
