@@ -10,4 +10,10 @@ export default defineConfig({
       '/api': 'http://localhost:5000',
     },
   },
+  build: {
+    outDir: 'dist',
+  },
+  define: {
+    'import.meta.env.VITE_API_URL': JSON.stringify('https://intellisoc-9vgd.onrender.com')
+  }
 })

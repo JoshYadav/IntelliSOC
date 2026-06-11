@@ -1,8 +1,10 @@
 {
-  "buildCommand": "npm run build",
+  "buildCommand": "npm install && npm run build",
   "outputDirectory": "dist",
   "framework": "vite",
+  "installCommand": "npm install",
   "env": {
     "VITE_API_URL": "https://intellisoc-9vgd.onrender.com"
   }
 }
+
