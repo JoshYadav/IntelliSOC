@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-echo "Installing all dependencies including dev..."
+echo "Installing dependencies..."
 npm install
 
 echo "Building TypeScript..."
@@ -13,4 +13,4 @@ npx prisma migrate deploy
 echo "Seeding database..."
 npm run db:seed
 
-echo "Build complete."
+echo "Done."
