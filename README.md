@@ -1,4 +1,7 @@
 # IntelliSOC — Enterprise-Grade SIEM, SOAR, & EDR Simulation Platform
+
+**🔴 Live Production Dashboard:** [https://intelli-soc-plum.vercel.app/](https://intelli-soc-plum.vercel.app/)
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Language: TypeScript](https://img.shields.io/badge/Language-TypeScript-blue.svg)](https://www.typescriptlang.org/)
 [![Database: SQLite & Prisma](https://img.shields.io/badge/Database-SQLite%20%26%20Prisma-lightblue.svg)](https://www.prisma.io/)
@@ -91,7 +94,7 @@ The repository contains a pre-built Sysmon log simulation file: [sysmon_sample.x
 ```
 
 ### Steps to Simulate:
-1. Navigate to the dashboard at `http://localhost:5173`.
+1. Navigate to the dashboard at `https://intelli-soc-plum.vercel.app`.
 2. Drag and drop [sysmon_sample.xml](file:///c:/Users/joshy/Downloads/IntelliSOC/share/sysmon_sample.xml) into the upload zone.
 3. Review the parsed log stream. The backend pipeline automatically extracts the structured XML data, fires the signatures, and maps them.
 4. **Analyst Inspection:**
@@ -120,7 +123,7 @@ Create a `.env` file inside the `backend/` directory based on [backend/.env.exam
 ```env
 DATABASE_URL="file:./dev.db"
 PORT=5000
-ALLOWED_ORIGINS="http://localhost:5173"
+ALLOWED_ORIGINS="https://intelli-soc-plum.vercel.app"
 
 # Enrichment Keys (Optional but highly recommended)
 ABUSEIPDB_API_KEY="your_abuseipdb_api_key_here"
@@ -153,7 +156,7 @@ npm install
 
 # Start Vite server
 npm run dev
-# Dashboard opens on http://localhost:5173
+# Dashboard opens on https://intelli-soc-plum.vercel.app
 ```
 
 ### 4. Running the EDR Telemetry Agent (Optional)

@@ -304,7 +304,7 @@ Create a `.env` file in the `backend` directory matching the following configura
 ```env
 DATABASE_URL="file:./dev.db"
 PORT=5000
-ALLOWED_ORIGINS="http://localhost:5173"
+ALLOWED_ORIGINS="https://intelli-soc-plum.vercel.app"
 
 # Enrichment Keys (Optional but highly recommended)
 ABUSEIPDB_API_KEY="your_abuseipdb_api_key_here"
@@ -338,13 +338,13 @@ Run these commands to install dependencies, run migrations, and spin up developm
    cd backend
    npm run dev
 
-   # Start Frontend (Listening on http://localhost:5173)
+   # Start Frontend (Listening on https://intelli-soc-plum.vercel.app)
    cd frontend
    npm run dev
    ```
 
 ### C. Simulating a Security Incident
-1. Navigate to http://localhost:5173 in your browser.
+1. Navigate to https://intelli-soc-plum.vercel.app in your browser.
 2. Select the **Dashboard** page.
 3. In the upload zone, drag and drop `mock_sample.log` (or `sample_log.txt`) located in the root of the project.
 4. Watch the pipeline parse, correlate, and enrich the logs.
