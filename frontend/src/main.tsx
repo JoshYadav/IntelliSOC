@@ -1,3 +1,4 @@
+// Production build - force env var reload
 // Unregister any lingering service workers from development
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.getRegistrations().then((registrations) => {
