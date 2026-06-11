@@ -4,7 +4,7 @@ build
 dist
 dist-ssr
 backend/dist
-frontend/dist
+frontend/dist/
 agent/watch_temp
 agent/watch_temp/*
 
