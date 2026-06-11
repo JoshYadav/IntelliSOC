@@ -2,14 +2,14 @@
   "name": "intellisoc-backend",
   "version": "1.0.0",
   "description": "IntelliSOC - Log-Based Cyber Attack Detection System Backend",
-  "main": "dist/server.js",
+  "main": "dist/src/server.js",
   "scripts": {
     "dev": "node --env-file=.env -r ts-node/register src/server.ts",
     "build": "tsc",
-    "start": "node dist/server.js",
+    "start": "node dist/src/server.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev --name init",
-    "db:seed": "node -r ts-node/register prisma/seed.ts"
+    "db:seed": "node dist/prisma/seed.js"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
