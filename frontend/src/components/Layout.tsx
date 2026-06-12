@@ -99,10 +99,14 @@ export default function Layout() {
     fontFamily: 'var(--font-display)',
     fontSize: '14px',
     fontWeight: 500,
-    color: isActive ? T.primary : T.textSecondary,
-    borderBottom: isActive ? `2px solid ${T.primary}` : '2px solid transparent',
+    color: isActive ? '#06b6d4' : T.textSecondary,
+    borderBottom: isActive ? 'none' : '2px solid transparent',
+    backgroundImage: isActive ? 'linear-gradient(90deg, #06b6d4, #3b82f6)' : 'none',
+    backgroundSize: '100% 2px',
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'bottom',
     textDecoration: 'none',
-    transition: 'color 0.15s ease, border-bottom-color 0.15s ease',
+    transition: 'color 0.15s ease, background-size 0.15s ease',
   });
 
   return (
@@ -119,13 +123,16 @@ export default function Layout() {
       <header style={{
         height: '56px',
         minHeight: '56px',
-        background: T.surface,
-        borderBottom: `1px solid ${T.border}`,
+        background: 'rgba(3, 7, 18, 0.85)',
+        backdropFilter: 'blur(20px)',
+        borderBottom: '1px solid rgba(6, 182, 212, 0.08)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         padding: '0 1.25rem',
-        zIndex: 100,
+        position: 'sticky',
+        top: 0,
+        zIndex: 50,
       }}>
         {/* Left: Logo and Sidebar Toggle */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
@@ -252,8 +259,10 @@ export default function Layout() {
               width: '6px',
               height: '6px',
               borderRadius: '50%',
-              background: T.low,
+              background: '#10b981',
               display: 'inline-block',
+              boxShadow: '0 0 8px #10b981',
+              animation: 'pulse-glow 2s ease infinite',
             }} />
             live
           </div>
@@ -279,8 +288,8 @@ export default function Layout() {
           minWidth: sidebarOpen ? '280px' : '0px',
           overflow: 'hidden',
           transition: 'width 0.2s cubic-bezier(0.4, 0, 0.2, 1), min-width 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-          background: T.surface,
-          borderRight: sidebarOpen ? `1px solid ${T.border}` : 'none',
+          background: 'rgba(7, 9, 26, 0.95)',
+          borderRight: sidebarOpen ? '1px solid rgba(6, 182, 212, 0.07)' : 'none',
           display: 'flex',
           flexDirection: 'column',
         }}>
@@ -318,8 +327,9 @@ export default function Layout() {
       <footer style={{
         height: '32px',
         minHeight: '32px',
-        background: T.surfaceDeep,
-        borderTop: `1px solid ${T.border}`,
+        background: 'rgba(3, 7, 18, 0.9)',
+        backdropFilter: 'blur(10px)',
+        borderTop: '1px solid rgba(6, 182, 212, 0.07)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -335,7 +345,7 @@ export default function Layout() {
             fontSize: 'var(--text-xs)',
             color: T.textMuted,
           }}>
-            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: T.low }} />
+            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981', boxShadow: '0 0 8px #10b981', animation: 'pulse-glow 2s ease infinite' }} />
             pipeline status: active
           </span>
           <span style={{
@@ -346,7 +356,7 @@ export default function Layout() {
             fontSize: 'var(--text-xs)',
             color: T.textMuted,
           }}>
-            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: T.low }} />
+            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981', boxShadow: '0 0 8px #10b981', animation: 'pulse-glow 2s ease infinite' }} />
             backend status: connected
           </span>
           <span style={{
@@ -423,11 +433,21 @@ function ThreatFeedPanel() {
 
   const getBadgeClass = (severity: string) => {
     switch (severity.toUpperCase()) {
-      case 'CRITICAL': return 'badge--critical';
-      case 'HIGH': return 'badge--high';
-      case 'MEDIUM': return 'badge--medium';
+      case 'CRITICAL': return 'badge-critical';
+      case 'HIGH': return 'badge-high';
+      case 'MEDIUM': return 'badge-medium';
       case 'LOW':
-      default: return 'badge--low';
+      default: return 'badge-low';
+    }
+  };
+
+  const getSeverityBorderColor = (severity: string) => {
+    switch (severity.toUpperCase()) {
+      case 'CRITICAL': return '#f43f5e';
+      case 'HIGH': return '#fb923c';
+      case 'MEDIUM': return '#60a5fa';
+      case 'LOW':
+      default: return '#10b981';
     }
   };
 
@@ -472,22 +492,25 @@ function ThreatFeedPanel() {
             <div
               key={threat.id}
               style={{
-                padding: '12px 14px',
+                padding: '8px 10px',
                 borderRadius: '8px',
-                background: T.bg,
-                border: `1px solid ${T.border}`,
-                borderLeft: isMostRecent ? `2px solid ${T.borderHover}` : `1px solid ${T.border}`,
+                background: 'rgba(6, 182, 212, 0.03)',
+                border: 'none',
+                borderLeft: `3px solid ${getSeverityBorderColor(threat.severity)}`,
+                margin: '4px 0',
                 position: 'relative',
                 cursor: 'pointer',
-                transition: 'background-color 0.15s ease, border-color 0.15s ease',
+                transition: 'all 0.2s ease',
               }}
               onMouseEnter={e => {
-                e.currentTarget.style.backgroundColor = T.surfaceHover;
-                e.currentTarget.style.borderColor = T.borderHover;
+                e.currentTarget.style.background = 'rgba(6, 182, 212, 0.08)';
+                e.currentTarget.style.borderLeftColor = getSeverityBorderColor(threat.severity);
+                e.currentTarget.style.filter = 'brightness(1.2)';
               }}
               onMouseLeave={e => {
-                e.currentTarget.style.backgroundColor = T.bg;
-                e.currentTarget.style.borderColor = T.border;
+                e.currentTarget.style.background = 'rgba(6, 182, 212, 0.03)';
+                e.currentTarget.style.borderLeftColor = getSeverityBorderColor(threat.severity);
+                e.currentTarget.style.filter = 'none';
               }}
             >
               {/* Timestamp top-right */}
@@ -530,7 +553,7 @@ function ThreatFeedPanel() {
                   {threat.source} · {threat.country}
                 </span>
 
-                <span className={`badge ${getBadgeClass(threat.severity)}`}>
+                <span className={getBadgeClass(threat.severity)}>
                   {threat.severity}
                 </span>
               </div>
@@ -551,7 +574,7 @@ function ThreatFeedPanel() {
       }}>
         <span>{threats.length} threats</span>
         <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: T.low }}>
-          <span className="pulse-glow" style={{ width: '6px', height: '6px', borderRadius: '50%', background: T.low, display: 'inline-block' }} />
+          <span className="pulse-glow" style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981', display: 'inline-block', boxShadow: '0 0 8px #10b981', animation: 'pulse-glow 2s ease infinite' }} />
           live
         </span>
       </div>

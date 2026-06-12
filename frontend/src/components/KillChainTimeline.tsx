@@ -135,9 +135,10 @@ export default function KillChainTimeline({ alerts }: KillChainTimelineProps) {
           return (
             <div
               key={phase.id}
+              className="card-premium"
               style={{
-                background: T.surface,
-                border: hasAlerts ? `1px solid ${T.high}` : `1px solid ${T.border}`,
+                border: hasAlerts ? '1px solid rgba(251,146,60,0.4)' : `1px solid ${T.border}`,
+                boxShadow: hasAlerts ? '0 0 16px rgba(251,146,60,0.12)' : 'none',
                 borderRadius: '12px',
                 padding: '20px',
                 textAlign: 'left',

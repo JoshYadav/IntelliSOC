@@ -63,7 +63,7 @@ export default function SessionsPage() {
   ];
 
   return (
-    <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+    <div className="animate-fade-in-up" style={{ maxWidth: '1400px', margin: '0 auto' }}>
       
       {/* 4 Stat Cards Top */}
       <div style={{
@@ -75,12 +75,9 @@ export default function SessionsPage() {
         {cards.map((card, i) => (
           <div
             key={card.label}
+            className="card-premium"
             style={{
-              background: T.surface,
-              border: `1px solid ${T.border}`,
-              borderRadius: '16px',
               padding: '24px',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.4), 0 8px 24px rgba(0,0,0,0.2)',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'center',
@@ -130,25 +127,9 @@ export default function SessionsPage() {
           </h2>
         </div>
         <button
+          className="btn-secondary"
           onClick={fetchSessions}
           disabled={isLoading}
-          style={{
-            background: T.primaryDim,
-            border: `1px solid ${T.primary}`,
-            color: T.primary,
-            borderRadius: '8px',
-            padding: '8px 16px',
-            fontFamily: 'var(--font-display)',
-            fontWeight: 500,
-            fontSize: '13px',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            transition: 'background-color 0.15s ease',
-          }}
-          onMouseEnter={e => e.currentTarget.style.backgroundColor = 'rgba(129,140,248,0.2)'}
-          onMouseLeave={e => e.currentTarget.style.backgroundColor = T.primaryDim}
         >
           <RefreshCw size={12} className={isLoading ? 'animate-spin' : ''} />
           Refresh
@@ -200,28 +181,25 @@ export default function SessionsPage() {
             return (
               <div
                 key={session.id}
+                className="card-premium"
                 onClick={() => navigate(`/?session=${session.id}`)}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  borderRadius: '10px',
                   padding: '16px 20px',
-                  background: T.surface,
                   border: `1px solid ${T.border}`,
                   borderLeft: alertsCount > 0 ? '3px solid #fb7185' : '3px solid transparent',
                   cursor: 'pointer',
-                  transition: 'border-color 0.15s ease, background-color 0.15s ease',
+                  transition: 'all 0.2s ease',
                   animation: 'fadeUp 0.4s ease both',
                   animationDelay: `${idx * 40}ms`,
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = T.borderHover;
-                  e.currentTarget.style.backgroundColor = T.surfaceHover;
+                  e.currentTarget.style.borderColor = 'rgba(6, 182, 212, 0.3)';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.borderColor = T.border;
-                  e.currentTarget.style.backgroundColor = T.surface;
                 }}
               >
                 {/* File info */}
@@ -251,7 +229,7 @@ export default function SessionsPage() {
                   {/* Detections badge */}
                   <div style={{ minWidth: '90px' }}>
                     {alertsCount > 0 ? (
-                      <span className="badge badge--critical">
+                      <span style={{ background: 'rgba(244,63,94,0.15)', color: '#f43f5e', border: '1px solid rgba(244,63,94,0.3)', boxShadow: '0 0 8px rgba(244,63,94,0.2)', padding: '2px 8px', borderRadius: '6px', fontSize: '11px', fontWeight: 600 }}>
                         △ {alertsCount}
                       </span>
                     ) : (
@@ -268,29 +246,10 @@ export default function SessionsPage() {
 
                   {/* Open Console Button */}
                   <button
+                    className="btn-secondary"
                     onClick={(e) => {
                       e.stopPropagation();
                       navigate(`/?session=${session.id}`);
-                    }}
-                    style={{
-                      background: 'none',
-                      border: `1px solid ${T.border}`,
-                      color: T.textSecondary,
-                      borderRadius: '8px',
-                      padding: '6px 14px',
-                      fontFamily: 'var(--font-display)',
-                      fontWeight: 500,
-                      fontSize: '13px',
-                      cursor: 'pointer',
-                      transition: 'border-color 0.15s ease, color 0.15s ease',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = T.borderHover;
-                      e.currentTarget.style.color = T.text;
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.borderColor = T.border;
-                      e.currentTarget.style.color = T.textSecondary;
                     }}
                   >
                     Open Console

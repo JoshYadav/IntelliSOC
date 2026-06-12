@@ -43,24 +43,18 @@ export default function AlertsTable({ alerts }: AlertsTableProps) {
 
   const getBadgeClass = (severity: string) => {
     switch (severity?.toUpperCase()) {
-      case 'CRITICAL': return 'badge--critical';
-      case 'HIGH': return 'badge--high';
-      case 'MEDIUM': return 'badge--medium';
+      case 'CRITICAL': return 'badge-critical';
+      case 'HIGH': return 'badge-high';
+      case 'MEDIUM': return 'badge-medium';
       case 'LOW':
-      default: return 'badge--low';
+      default: return 'badge-low';
     }
   };
 
   return (
-    <div style={{
-      background: T.surface,
-      border: `1px solid ${T.border}`,
-      borderRadius: '16px',
-      overflow: 'hidden',
-      boxShadow: '0 1px 3px rgba(0,0,0,0.4), 0 8px 24px rgba(0,0,0,0.2)',
-    }}>
+    <div className="card-premium" style={{ borderRadius: '12px', overflow: 'hidden' }}>
       <div style={{ overflowX: 'auto' }}>
-        <table className="op-table">
+        <table className="table-premium">
           <thead>
             <tr>
               <th>Type</th>
@@ -109,7 +103,7 @@ export default function AlertsTable({ alerts }: AlertsTableProps) {
 
                   {/* Severity Pill */}
                   <td>
-                    <span className={`badge ${getBadgeClass(alert.severity)}`}>
+                    <span className={getBadgeClass(alert.severity)}>
                       {alert.severity}
                     </span>
                   </td>

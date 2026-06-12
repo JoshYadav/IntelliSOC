@@ -263,7 +263,7 @@ export default function DashboardPage() {
       gap: '12px',
       marginBottom: '1.5rem',
       paddingLeft: '12px',
-      borderLeft: `4px solid ${T.primary}`
+      borderLeft: `3px solid #06b6d4`
     }}>
       <h2 style={{
         fontFamily: 'var(--font-display)',
@@ -290,7 +290,7 @@ export default function DashboardPage() {
   );
 
   return (
-    <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+    <div className="animate-fade-in-up" style={{ maxWidth: '1400px', margin: '0 auto' }}>
       
       {/* Session Toolbar */}
       {sessionId && (

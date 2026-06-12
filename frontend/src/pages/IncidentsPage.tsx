@@ -40,7 +40,7 @@ const getPriorityColor = (prio: string) => {
 const getStatusBadgeStyles = (status: string) => {
   switch (status?.toUpperCase()) {
     case 'OPEN':
-      return { background: T.primaryDim, color: T.primary, border: `1px solid ${T.primary}` };
+      return { background: 'rgba(251,146,60,0.1)', color: '#fb923c', border: '1px solid rgba(251,146,60,0.3)' };
     case 'RESOLVED':
       return { background: T.lowDim, color: T.low, border: `1px solid ${T.low}` };
     case 'IN_PROGRESS':
@@ -97,7 +97,7 @@ export default function IncidentsPage() {
   ];
 
   return (
-    <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+    <div className="animate-fade-in-up" style={{ maxWidth: '1400px', margin: '0 auto' }}>
       
       {/* 4 Stat Cards Top */}
       <div style={{
@@ -109,12 +109,9 @@ export default function IncidentsPage() {
         {statCards.map((card, i) => (
           <div
             key={card.label}
+            className="card-premium"
             style={{
-              background: T.surface,
-              border: `1px solid ${T.border}`,
-              borderRadius: '16px',
               padding: '24px',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.4), 0 8px 24px rgba(0,0,0,0.2)',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'center',
@@ -182,25 +179,9 @@ export default function IncidentsPage() {
         </div>
 
         <button
+          className="btn-secondary"
           onClick={fetchIncidentsData}
           disabled={isLoading}
-          style={{
-            background: T.primaryDim,
-            border: `1px solid ${T.primary}`,
-            color: T.primary,
-            borderRadius: '8px',
-            padding: '8px 16px',
-            fontFamily: 'var(--font-display)',
-            fontWeight: 500,
-            fontSize: '13px',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            transition: 'background-color 0.15s ease',
-          }}
-          onMouseEnter={e => e.currentTarget.style.backgroundColor = 'rgba(129,140,248,0.2)'}
-          onMouseLeave={e => e.currentTarget.style.backgroundColor = T.primaryDim}
         >
           <RefreshCw size={12} className={isLoading ? 'animate-spin' : ''} />
           Refresh
@@ -255,27 +236,25 @@ export default function IncidentsPage() {
             return (
               <div
                 key={incident.id}
+                className="card-premium"
                 onClick={() => navigate(`/incidents/${incident.id}`)}
                 style={{
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  borderRadius: '12px',
                   padding: '16px 20px',
-                  background: T.surface,
                   border: 'none',
                   borderLeft: `3px solid ${prioColor}`,
-                  boxShadow: '0 1px 2px rgba(0,0,0,0.2), 0 4px 12px rgba(0,0,0,0.1)',
                   cursor: 'pointer',
-                  transition: 'background-color 0.15s ease',
+                  transition: 'all 0.2s ease',
                   animation: 'fadeUp 0.4s ease both',
                   animationDelay: `${idx * 40}ms`,
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = T.surfaceHover;
+                  e.currentTarget.style.filter = 'brightness(1.2)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = T.surface;
+                  e.currentTarget.style.filter = 'none';
                 }}
               >
                 {/* Title & ID Left */}
@@ -345,32 +324,10 @@ export default function IncidentsPage() {
 
                   {/* Inspect Button */}
                   <button
+                    className="btn-secondary"
                     onClick={(e) => {
                       e.stopPropagation();
                       navigate(`/incidents/${incident.id}`);
-                    }}
-                    style={{
-                      background: 'none',
-                      border: `1px solid ${T.border}`,
-                      color: T.textSecondary,
-                      borderRadius: '8px',
-                      padding: '6px 14px',
-                      fontFamily: 'var(--font-display)',
-                      fontWeight: 500,
-                      fontSize: '13px',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '4px',
-                      transition: 'border-color 0.15s ease, color 0.15s ease',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = T.borderHover;
-                      e.currentTarget.style.color = T.text;
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.borderColor = T.border;
-                      e.currentTarget.style.color = T.textSecondary;
                     }}
                   >
                     Inspect <ArrowRight size={12} />

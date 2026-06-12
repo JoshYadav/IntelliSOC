@@ -170,7 +170,7 @@ export default function PlaybooksPage() {
   };
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+    <div className="animate-fade-in-up" style={{ maxWidth: '1200px', margin: '0 auto' }}>
       
       {/* Header section */}
       <div style={{
@@ -198,24 +198,8 @@ export default function PlaybooksPage() {
         </div>
         
         <button
+          className="btn-primary"
           onClick={() => setShowBuilder(true)}
-          style={{
-            background: T.primaryDim,
-            border: `1px solid ${T.primary}`,
-            color: T.primary,
-            borderRadius: '10px',
-            padding: '10px 20px',
-            fontFamily: 'var(--font-display)',
-            fontWeight: 500,
-            fontSize: '14px',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            transition: 'background-color 0.15s ease',
-          }}
-          onMouseEnter={e => e.currentTarget.style.backgroundColor = 'rgba(129,140,248,0.2)'}
-          onMouseLeave={e => e.currentTarget.style.backgroundColor = T.primaryDim}
         >
           <Plus size={14} />
           New Blueprint
@@ -273,10 +257,8 @@ export default function PlaybooksPage() {
             return (
               <div
                 key={pb.id}
+                className="card-premium"
                 style={{
-                  background: T.surface,
-                  border: `1px solid ${T.border}`,
-                  borderRadius: '12px',
                   padding: '20px',
                   display: 'flex',
                   flexDirection: 'column',

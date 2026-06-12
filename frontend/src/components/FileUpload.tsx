@@ -117,21 +117,23 @@ export default function FileUpload({ onUploadSuccess }: FileUploadProps) {
           position: 'relative',
           padding: '64px 24px',
           borderRadius: '16px',
-          border: `1px dashed ${isDragging ? T.primary : T.border}`,
-          background: isDragging ? T.primaryDim : T.surface,
+          border: isDragging ? '2px dashed rgba(6, 182, 212, 0.5)' : '2px dashed rgba(6, 182, 212, 0.2)',
+          background: isDragging
+            ? 'radial-gradient(ellipse at center, rgba(6,182,212,0.08) 0%, transparent 70%)'
+            : 'radial-gradient(ellipse at center, rgba(6,182,212,0.04) 0%, transparent 70%)',
           cursor: 'pointer',
           textAlign: 'center',
           overflow: 'hidden',
-          transition: 'all 0.2s ease',
+          transition: 'all 0.3s ease',
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.borderColor = T.primary;
-          e.currentTarget.style.background = T.surfaceHover;
+          e.currentTarget.style.borderColor = 'rgba(6, 182, 212, 0.5)';
+          e.currentTarget.style.background = 'radial-gradient(ellipse at center, rgba(6,182,212,0.08) 0%, transparent 70%)';
         }}
         onMouseLeave={(e) => {
           if (!isDragging) {
-            e.currentTarget.style.borderColor = T.border;
-            e.currentTarget.style.background = T.surface;
+            e.currentTarget.style.borderColor = 'rgba(6, 182, 212, 0.2)';
+            e.currentTarget.style.background = 'radial-gradient(ellipse at center, rgba(6,182,212,0.04) 0%, transparent 70%)';
           }
         }}
       >
@@ -155,9 +157,17 @@ export default function FileUpload({ onUploadSuccess }: FileUploadProps) {
           justifyContent: 'center',
         }}>
           {isUploading ? (
-            <Loader2 size={40} className="animate-spin" style={{ color: T.primary }} />
+            <Loader2 size={40} className="animate-spin" style={{ color: '#06b6d4' }} />
           ) : (
-            <Shield size={40} style={{ color: T.primary }} />
+            <div style={{ position: 'relative', display: 'inline-flex' }}>
+              <div style={{
+                position: 'absolute', inset: '-8px',
+                borderRadius: '50%',
+                border: '1px solid rgba(6, 182, 212, 0.3)',
+                animation: 'radar-ping 2s ease-out infinite'
+              }} />
+              <Shield size={40} style={{ color: '#06b6d4' }} />
+            </div>
           )}
         </div>
 
@@ -194,27 +204,15 @@ export default function FileUpload({ onUploadSuccess }: FileUploadProps) {
         </p>
 
         <button
+          className="btn-primary"
           onClick={(e) => {
             e.stopPropagation();
             fileInputRef.current?.click();
           }}
           style={{
-            background: T.primaryDim,
-            border: `1px solid ${T.primary}`,
-            color: T.primary,
-            borderRadius: '10px',
-            padding: '10px 20px',
             fontFamily: 'var(--font-display)',
-            fontWeight: 500,
+            padding: '10px 20px',
             fontSize: '14px',
-            cursor: 'pointer',
-            transition: 'background-color 0.15s ease',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = 'rgba(129, 140, 248, 0.2)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = T.primaryDim;
           }}
         >
           Browse Files

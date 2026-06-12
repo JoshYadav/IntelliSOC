@@ -251,7 +251,7 @@ export default function IncidentDetailPage() {
   });
 
   return (
-    <div style={{ maxWidth: '1400px', margin: '0 auto', animation: 'fadeUp 0.4s ease both' }}>
+    <div className="animate-fade-in-up" style={{ maxWidth: '1400px', margin: '0 auto', animation: 'fadeUp 0.4s ease both' }}>
       
       {/* Back button */}
       <button
@@ -474,7 +474,7 @@ export default function IncidentDetailPage() {
           )}
 
           {/* AI Threat Summary Panel */}
-          <div className="op-card" style={{ padding: '24px' }}>
+          <div className="card-premium" style={{ padding: '24px', borderLeft: '3px solid #06b6d4' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <Sparkles size={16} style={{ color: T.primary }} />
@@ -717,7 +717,7 @@ export default function IncidentDetailPage() {
           </div>
 
           {/* Trigger Playbook console */}
-          <div className="op-card" style={{ padding: '20px' }}>
+          <div className="card-premium" style={{ padding: '20px' }}>
             <h4 style={{ fontSize: 'var(--text-sm)', fontWeight: 600, fontFamily: 'var(--font-display)', marginBottom: '12px', color: T.text }}>
               SOAR Orchestration
             </h4>
@@ -734,24 +734,9 @@ export default function IncidentDetailPage() {
               </select>
               
               <button
+                className="btn-primary"
                 onClick={handleTriggerPlaybook}
                 disabled={isPlaybookTriggering || !selectedPlaybookId}
-                style={{
-                  width: '100%',
-                  background: T.primaryDim,
-                  border: `1px solid ${T.primary}`,
-                  color: T.primary,
-                  borderRadius: '8px',
-                  padding: '8px 16px',
-                  fontFamily: 'var(--font-display)',
-                  fontWeight: 500,
-                  fontSize: '13px',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px',
-                }}
               >
                 {isPlaybookTriggering ? (
                   <Loader2 size={12} className="animate-spin" />

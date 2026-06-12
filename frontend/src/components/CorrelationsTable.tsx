@@ -39,7 +39,7 @@ const T = {
 export default function CorrelationsTable({ correlations, isLoading, onRefresh }: CorrelationsTableProps) {
   if (isLoading) {
     return (
-      <div className="op-card" style={{ padding: '4rem 2rem', textAlign: 'center', color: T.textSecondary, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+      <div className="card-premium" style={{ padding: '4rem 2rem', textAlign: 'center', color: T.textSecondary, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
         <Loader2 size={32} style={{ color: T.primary, animation: 'spin 1s linear infinite' }} />
         <p style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--text-sm)' }}>
           Correlating threat metrics and identifiers across system history...
@@ -113,7 +113,7 @@ export default function CorrelationsTable({ correlations, isLoading, onRefresh }
       )}
 
       {correlations.length === 0 ? (
-        <div className="op-card" style={{ textAlign: 'center', padding: '5rem 2rem', color: T.textSecondary }}>
+        <div className="card-premium" style={{ textAlign: 'center', padding: '5rem 2rem', color: T.textSecondary }}>
           <Clock size={40} style={{ marginBottom: '1rem', opacity: 0.4, margin: '0 auto 1rem auto' }} />
           <h4 style={{ fontFamily: 'var(--font-display)', fontSize: 'var(--text-lg)', fontWeight: 600, color: T.text, marginBottom: '0.5rem' }}>
             No Identifier Correlations
@@ -123,9 +123,9 @@ export default function CorrelationsTable({ correlations, isLoading, onRefresh }
           </p>
         </div>
       ) : (
-        <div className="op-card" style={{ overflow: 'hidden', padding: 0 }}>
+        <div className="card-premium" style={{ overflow: 'hidden', padding: 0 }}>
           <div style={{ overflowX: 'auto' }}>
-            <table className="op-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <table className="table-premium" style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
                 <tr>
                   <th style={{ padding: '16px', borderBottom: `1px solid ${T.border}`, fontFamily: 'var(--font-display)', color: T.textSecondary, fontWeight: 600, fontSize: 'var(--text-xs)' }}>Attacker IP</th>
@@ -160,7 +160,7 @@ export default function CorrelationsTable({ correlations, isLoading, onRefresh }
                             <Clipboard size={12} className="copy-ip-icon" />
                           </span>
                           {isCrossSession && (
-                            <span className="badge badge--critical" style={{ background: T.criticalDim, color: T.critical, borderColor: 'rgba(251, 113, 133, 0.25)', fontSize: '10px' }}>
+                            <span style={{ background: 'rgba(244,63,94,0.1)', color: '#f43f5e', border: '1px solid rgba(244,63,94,0.25)', borderRadius: '4px', padding: '2px 8px', fontSize: '11px' }}>
                               <AlertTriangle size={8} style={{ marginRight: '2px', display: 'inline' }} /> PERSISTENT
                             </span>
                           )}

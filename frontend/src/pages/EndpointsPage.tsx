@@ -134,7 +134,7 @@ export default function EndpointsPage() {
   ];
 
   return (
-    <div style={{ maxWidth: '1400px', margin: '0 auto', animation: 'fadeUp 0.4s ease both' }}>
+    <div className="animate-fade-in-up" style={{ maxWidth: '1400px', margin: '0 auto', animation: 'fadeUp 0.4s ease both' }}>
       
       {/* Metrics Cards */}
       <div style={{
@@ -146,12 +146,9 @@ export default function EndpointsPage() {
         {statCards.map((card, i) => (
           <div
             key={card.label}
+            className="card-premium"
             style={{
-              background: T.surface,
-              border: `1px solid ${T.border}`,
-              borderRadius: '16px',
               padding: '24px',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.4), 0 8px 24px rgba(0,0,0,0.2)',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'center',
@@ -297,7 +294,7 @@ export default function EndpointsPage() {
       ) : (
         <div className="op-card" style={{ overflow: 'hidden', padding: 0 }}>
           <div style={{ overflowX: 'auto' }}>
-            <table className="op-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <table className="table-premium" style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
                 <tr>
                   <th style={{ padding: '16px', borderBottom: `1px solid ${T.border}`, fontFamily: 'var(--font-display)', color: T.textSecondary, fontWeight: 600, fontSize: 'var(--text-xs)' }}>Hostname</th>
@@ -316,19 +313,19 @@ export default function EndpointsPage() {
 
                   // Status style mappings
                   let statusBadge = (
-                    <span className="badge badge--low" style={{ background: T.lowDim, color: T.low, borderColor: 'rgba(52, 211, 153, 0.25)' }}>
+                    <span className="badge" style={{ background: 'rgba(16,185,129,0.1)', color: '#10b981', border: '1px solid rgba(16,185,129,0.3)', boxShadow: '0 0 8px rgba(16,185,129,0.2)' }}>
                       ONLINE
                     </span>
                   );
                   if (ep.status === 'OFFLINE') {
                     statusBadge = (
-                      <span className="badge" style={{ border: `1px solid ${T.border}`, color: T.textMuted, background: 'transparent' }}>
+                      <span className="badge" style={{ background: 'rgba(100,116,139,0.1)', color: '#64748b', border: '1px solid rgba(100,116,139,0.2)' }}>
                         OFFLINE
                       </span>
                     );
                   } else if (ep.status === 'ISOLATED') {
                     statusBadge = (
-                      <span className="badge badge--critical" style={{ background: T.criticalDim, color: T.critical, borderColor: 'rgba(251, 113, 133, 0.25)' }}>
+                      <span className="badge badge-critical" style={{ background: T.criticalDim, color: T.critical, borderColor: 'rgba(251, 113, 133, 0.25)' }}>
                         <Lock size={10} style={{ marginRight: '4px', display: 'inline' }} />
                         ISOLATED
                       </span>
@@ -371,11 +368,11 @@ export default function EndpointsPage() {
                       </td>
                       <td style={{ padding: '16px' }}>
                         {threats > 0 ? (
-                          <span className="badge badge--critical" style={{ background: T.criticalDim, color: T.critical, borderColor: 'rgba(251, 113, 133, 0.25)' }}>
+                          <span className="badge badge-critical">
                             △ {threats}
                           </span>
                         ) : (
-                          <span className="badge badge--low" style={{ background: T.lowDim, color: T.low, borderColor: 'rgba(52, 211, 153, 0.25)' }}>
+                          <span className="badge" style={{ background: 'rgba(16,185,129,0.1)', color: '#10b981', border: '1px solid rgba(16,185,129,0.25)' }}>
                             CLEAN
                           </span>
                         )}
@@ -383,28 +380,13 @@ export default function EndpointsPage() {
                       <td style={{ padding: '16px', textAlign: 'right' }} onClick={(e) => e.stopPropagation()}>
                         <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
                           <button
+                            className="btn-primary"
                             onClick={() => handleToggleIsolation(ep)}
                             disabled={isActionLoading}
                             style={{
-                              background: 'transparent',
-                              border: `1px solid ${T.critical}`,
-                              color: T.critical,
-                              borderRadius: '8px',
-                              padding: '6px 14px',
-                              fontFamily: 'var(--font-display)',
-                              fontWeight: 500,
-                              fontSize: '13px',
-                              cursor: 'pointer',
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '6px',
-                              transition: 'background-color 0.2s ease',
-                            }}
-                            onMouseEnter={(e) => {
-                              e.currentTarget.style.backgroundColor = T.criticalDim;
-                            }}
-                            onMouseLeave={(e) => {
-                              e.currentTarget.style.backgroundColor = 'transparent';
+                              background: 'linear-gradient(135deg, #f43f5e, #e11d48)',
+                              border: 'none',
+                              color: '#fff',
                             }}
                           >
                             {isActionLoading ? (
@@ -423,30 +405,8 @@ export default function EndpointsPage() {
                           </button>
 
                           <button
+                            className="btn-secondary"
                             onClick={() => navigate(`/endpoints/${ep.id}`)}
-                            style={{
-                              background: 'transparent',
-                              border: `1px solid ${T.border}`,
-                              color: T.textSecondary,
-                              borderRadius: '8px',
-                              padding: '6px 14px',
-                              fontFamily: 'var(--font-display)',
-                              fontWeight: 500,
-                              fontSize: '13px',
-                              cursor: 'pointer',
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '6px',
-                              transition: 'all 0.2s ease',
-                            }}
-                            onMouseEnter={(e) => {
-                              e.currentTarget.style.borderColor = T.borderHover;
-                              e.currentTarget.style.color = T.text;
-                            }}
-                            onMouseLeave={(e) => {
-                              e.currentTarget.style.borderColor = T.border;
-                              e.currentTarget.style.color = T.textSecondary;
-                            }}
                           >
                             <Eye size={12} /> Profile
                           </button>

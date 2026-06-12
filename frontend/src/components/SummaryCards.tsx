@@ -1,3 +1,4 @@
+import CountUp from 'react-countup';
 import type { AnalyticsData } from '../types';
 
 interface SummaryCardsProps {
@@ -26,32 +27,32 @@ export default function SummaryCards({ analytics, logsProcessed, alertsGenerated
     {
       label: 'Lines Parsed',
       value: analytics?.totalLogs ?? logsProcessed,
-      color: T.text,
+      color: '#e2e8f0',
     },
     {
       label: 'Threats Detected',
       value: analytics?.totalAlerts ?? alertsGenerated,
-      color: T.text,
+      color: '#e2e8f0',
     },
     {
       label: 'Immediate Action',
       value: criticalCount,
-      color: criticalCount > 0 ? T.critical : T.text,
+      color: criticalCount > 0 ? T.critical : '#e2e8f0',
     },
     {
       label: 'Needs Attention',
       value: highCount,
-      color: highCount > 0 ? T.high : T.text,
+      color: highCount > 0 ? T.high : '#e2e8f0',
     },
     {
       label: 'Monitor',
       value: analytics?.alertsBySeverity?.['MEDIUM'] ?? 0,
-      color: T.text,
+      color: '#e2e8f0',
     },
     {
       label: 'Source Addresses',
       value: analytics?.topIPs?.length ?? 0,
-      color: T.text,
+      color: '#e2e8f0',
     },
   ];
 
@@ -59,50 +60,51 @@ export default function SummaryCards({ analytics, logsProcessed, alertsGenerated
     <div style={{
       display: 'grid',
       gridTemplateColumns: 'repeat(6, 1fr)',
-      gap: '1.5rem', // spacious layout
+      gap: '1.5rem',
       marginBottom: '3rem',
     }}>
       {cards.map((card, i) => (
         <div
           key={card.label}
+          className="card-premium"
           style={{
-            background: T.surface,
-            border: `1px solid ${T.border}`,
-            borderRadius: '16px',
             padding: '24px',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.4), 0 8px 24px rgba(0,0,0,0.2)',
             display: 'flex',
             flexDirection: 'column',
-            justifyContent: 'center',
-            transition: 'border-color 0.15s ease',
-            animation: 'fadeUp 0.4s ease both',
+            gap: '12px',
+            position: 'relative',
+            overflow: 'hidden',
+            animation: 'fade-in-up 0.4s ease both',
             animationDelay: `${i * 60}ms`,
           }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.borderColor = T.borderHover;
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.borderColor = T.border;
-          }}
         >
+          {/* Decorative top-right glow accent */}
+          <div style={{
+            position: 'absolute', top: 0, right: 0,
+            width: '80px', height: '80px',
+            background: 'radial-gradient(circle, rgba(6,182,212,0.12) 0%, transparent 70%)',
+            borderRadius: '0 12px 0 0'
+          }} />
+
           {/* Large Number */}
           <div style={{
-            fontFamily: 'var(--font-display)',
-            fontSize: '3.25rem',
+            fontFamily: "'JetBrains Mono', monospace",
+            fontSize: '2.5rem',
             fontWeight: 700,
             color: card.color,
             lineHeight: 1.1,
-            marginBottom: '8px',
           }}>
-            {card.value}
+            <CountUp end={Number(card.value)} duration={2} separator="," />
           </div>
 
           {/* Label Below */}
           <div style={{
-            fontFamily: 'var(--font-display)',
-            fontSize: 'var(--text-sm)',
+            fontFamily: "'Inter', sans-serif",
+            fontSize: '11px',
             fontWeight: 500,
-            color: T.textSecondary,
+            letterSpacing: '0.1em',
+            textTransform: 'uppercase',
+            color: '#64748b',
           }}>
             {card.label}
           </div>
