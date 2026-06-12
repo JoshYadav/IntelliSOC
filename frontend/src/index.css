@@ -196,3 +196,36 @@ body {
 
 /* Mono text */
 .font-mono { font-family: var(--font-mono); }
+
+select {
+  background: #0d1526 !important;
+  border: 1px solid rgba(6, 182, 212, 0.2) !important;
+  border-radius: 8px !important;
+  color: #e2e8f0 !important;
+  padding: 7px 12px !important;
+  font-size: 13px !important;
+  outline: none !important;
+  cursor: pointer !important;
+  appearance: auto !important;
+  -webkit-appearance: auto !important;
+}
+
+select option {
+  background: #0d1526 !important;
+  color: #e2e8f0 !important;
+}
+
+input[type="text"], input[type="search"] {
+  background: #0d1526 !important;
+  border: 1px solid rgba(6, 182, 212, 0.2) !important;
+  border-radius: 8px !important;
+  color: #e2e8f0 !important;
+  padding: 7px 14px !important;
+  font-size: 13px !important;
+  outline: none !important;
+}
+
+input[type="text"]:focus, input[type="search"]:focus {
+  border-color: rgba(6, 182, 212, 0.5) !important;
+  box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.08) !important;
+}

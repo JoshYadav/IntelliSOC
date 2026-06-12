@@ -446,7 +446,14 @@ export default function DashboardPage() {
           </ErrorBoundary>
 
           {/* Section 3 — AI Security Assessment */}
-          <div className="op-card" style={{ position: 'relative', overflow: 'hidden' }}>
+          <div style={{
+            background: 'linear-gradient(135deg, #0d1526 0%, #0a0f1e 100%)',
+            border: '1px solid rgba(6, 182, 212, 0.1)',
+            borderRadius: '12px',
+            padding: '24px',
+            boxShadow: '0 0 20px rgba(6, 182, 212, 0.04)',
+            position: 'relative', overflow: 'hidden'
+          }}>
             {/* Gemini Sparkle Badge (subtly placed top-right) */}
             <div style={{
               position: 'absolute',
@@ -575,7 +582,13 @@ export default function DashboardPage() {
           </div>
 
           {/* Section 5 — Vector Geolocation Map */}
-          <div>
+          <div style={{
+            background: 'linear-gradient(135deg, #0d1526 0%, #0a0f1e 100%)',
+            border: '1px solid rgba(6, 182, 212, 0.1)',
+            borderRadius: '12px',
+            overflow: 'hidden',
+            padding: '24px' // Adding padding so content doesn't hit borders
+          }}>
             <GeoIPMap
               attackers={attackers}
               socCore={{ lat: 37, lng: -95 }}

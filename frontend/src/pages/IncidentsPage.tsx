@@ -170,7 +170,18 @@ export default function IncidentsPage() {
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
             className="op-select"
-            style={{ minWidth: '140px' }}
+            style={{
+              background: '#0d1526',
+              border: '1px solid rgba(6, 182, 212, 0.2)',
+              borderRadius: '8px',
+              color: '#e2e8f0',
+              padding: '7px 32px 7px 12px',
+              fontSize: '13px',
+              outline: 'none',
+              cursor: 'pointer',
+              appearance: 'auto',
+              WebkitAppearance: 'auto'
+            }}
           >
             <option value="ALL">Status: All</option>
             <option value="OPEN">Status: Open</option>
@@ -183,7 +194,18 @@ export default function IncidentsPage() {
             value={priorityFilter}
             onChange={(e) => setPriorityFilter(e.target.value)}
             className="op-select"
-            style={{ minWidth: '150px' }}
+            style={{
+              background: '#0d1526',
+              border: '1px solid rgba(6, 182, 212, 0.2)',
+              borderRadius: '8px',
+              color: '#e2e8f0',
+              padding: '7px 32px 7px 12px',
+              fontSize: '13px',
+              outline: 'none',
+              cursor: 'pointer',
+              appearance: 'auto',
+              WebkitAppearance: 'auto'
+            }}
           >
             <option value="ALL">Priority: All</option>
             <option value="CRITICAL">Priority: Critical</option>
@@ -318,9 +340,22 @@ export default function IncidentsPage() {
                   </span>
 
                   {/* Status Badge */}
-                  <span className="badge" style={statusStyles}>
-                    {incident.status.replace(/_/g, ' ')}
-                  </span>
+                  {incident.status === 'OPEN' ? (
+                    <span style={{
+                      background: 'rgba(251, 146, 60, 0.1)',
+                      color: '#fb923c',
+                      border: '1px solid rgba(251, 146, 60, 0.25)',
+                      borderRadius: '4px',
+                      padding: '2px 10px',
+                      fontSize: '11px',
+                      fontWeight: 600,
+                      letterSpacing: '0.06em'
+                    }}>OPEN</span>
+                  ) : (
+                    <span className="badge" style={statusStyles}>
+                      {incident.status.replace(/_/g, ' ')}
+                    </span>
+                  )}
 
                   {/* Events count */}
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', minWidth: '70px' }}>

@@ -216,11 +216,14 @@ export default function EndpointsPage() {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="op-input"
               style={{
-                width: '100%',
-                paddingLeft: '2.2rem',
-                height: '40px',
-                fontSize: 'var(--text-sm)',
+                background: '#0d1526',
+                border: '1px solid rgba(6, 182, 212, 0.2)',
                 borderRadius: '8px',
+                color: '#e2e8f0',
+                padding: '8px 14px 8px 36px',
+                fontSize: '13px',
+                outline: 'none',
+                width: '100%',
                 fontFamily: 'var(--font-display)',
               }}
             />
@@ -230,7 +233,18 @@ export default function EndpointsPage() {
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
             className="op-select"
-            style={{ minWidth: '160px', height: '40px', fontSize: 'var(--text-sm)', borderRadius: '8px' }}
+            style={{
+              background: '#0d1526',
+              border: '1px solid rgba(6, 182, 212, 0.2)',
+              borderRadius: '8px',
+              color: '#e2e8f0',
+              padding: '7px 32px 7px 12px',
+              fontSize: '13px',
+              outline: 'none',
+              cursor: 'pointer',
+              appearance: 'auto',
+              WebkitAppearance: 'auto'
+            }}
           >
             <option value="ALL">Host Status: All</option>
             <option value="ONLINE">Status: Online</option>
@@ -321,9 +335,17 @@ export default function EndpointsPage() {
 
                   // Status style mappings
                   let statusBadge = (
-                    <span className="badge" style={{ background: 'rgba(16,185,129,0.1)', color: '#10b981', border: '1px solid rgba(16,185,129,0.3)', boxShadow: '0 0 8px rgba(16,185,129,0.2)' }}>
-                      ONLINE
-                    </span>
+                    <span style={{
+                      background: 'rgba(16, 185, 129, 0.1)',
+                      color: '#10b981',
+                      border: '1px solid rgba(16, 185, 129, 0.2)',
+                      borderRadius: '4px',
+                      padding: '2px 10px',
+                      fontSize: '11px',
+                      fontWeight: 600,
+                      letterSpacing: '0.06em',
+                      boxShadow: '0 0 8px rgba(16, 185, 129, 0.15)'
+                    }}>ONLINE</span>
                   );
                   if (ep.status === 'OFFLINE') {
                     statusBadge = (

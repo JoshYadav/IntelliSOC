@@ -38,10 +38,16 @@ export default function Filters({ severityFilter, typeFilter, onSeverityChange, 
           onChange={(e) => onSeverityChange(e.target.value)}
           className="op-select"
           style={{
-            minWidth: '160px',
-            height: '40px',
-            fontSize: 'var(--text-sm)',
+            background: '#0d1526',
+            border: '1px solid rgba(6, 182, 212, 0.2)',
             borderRadius: '8px',
+            color: '#e2e8f0',
+            padding: '7px 32px 7px 12px',
+            fontSize: '13px',
+            outline: 'none',
+            cursor: 'pointer',
+            appearance: 'auto',
+            WebkitAppearance: 'auto'
           }}
         >
           {severities.map((s) => {
@@ -64,10 +70,16 @@ export default function Filters({ severityFilter, typeFilter, onSeverityChange, 
           onChange={(e) => onTypeChange(e.target.value)}
           className="op-select"
           style={{
-            minWidth: '200px',
-            height: '40px',
-            fontSize: 'var(--text-sm)',
+            background: '#0d1526',
+            border: '1px solid rgba(6, 182, 212, 0.2)',
             borderRadius: '8px',
+            color: '#e2e8f0',
+            padding: '7px 32px 7px 12px',
+            fontSize: '13px',
+            outline: 'none',
+            cursor: 'pointer',
+            appearance: 'auto',
+            WebkitAppearance: 'auto'
           }}
         >
           {attackTypes.map((t) => {

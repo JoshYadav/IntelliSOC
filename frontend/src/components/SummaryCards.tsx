@@ -92,9 +92,10 @@ export default function SummaryCards({ analytics, logsProcessed, alertsGenerated
           {/* Decorative top-right glow accent */}
           <div style={{
             position: 'absolute', top: 0, right: 0,
-            width: '80px', height: '80px',
-            background: 'radial-gradient(circle, rgba(6,182,212,0.12) 0%, transparent 70%)',
-            borderRadius: '0 12px 0 0'
+            width: '100px', height: '100px',
+            background: 'radial-gradient(circle at top right, rgba(6,182,212,0.1) 0%, transparent 70%)',
+            borderRadius: '0 12px 0 0',
+            pointerEvents: 'none'
           }} />
 
           {/* Large Number */}

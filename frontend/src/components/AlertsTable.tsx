@@ -93,8 +93,8 @@ export default function AlertsTable({ alerts }: AlertsTableProps) {
                     </span>
                   </td>
 
-                  {/* Source IP (JetBrains Mono T.dataText) */}
-                  <td style={{ fontFamily: 'var(--font-mono)', color: T.dataText, fontWeight: 500 }}>
+                  {/* Source IP */}
+                  <td style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '12px', color: '#06b6d4', fontWeight: 500 }}>
                     <span className="copy-ip-container" onClick={() => copyToClipboard(alert.ip)} title="Click to copy IP">
                       <span>{alert.ip}</span>
                       <Clipboard size={12} className="copy-ip-icon" />

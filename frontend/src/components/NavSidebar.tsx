@@ -22,8 +22,9 @@ export default function NavSidebar() {
   return (
     <aside style={{
       width: '260px',
-      background: 'var(--color-bg-secondary)',
-      borderRight: '1px solid var(--color-border)',
+      background: 'rgba(5, 8, 20, 0.98)',
+      borderRight: '1px solid rgba(6, 182, 212, 0.07)',
+      backdropFilter: 'blur(10px)',
       height: '100vh',
       position: 'sticky',
       top: 0,

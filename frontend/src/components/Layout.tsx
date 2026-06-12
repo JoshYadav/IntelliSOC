@@ -543,9 +543,9 @@ function ThreatFeedPanel() {
                 marginTop: '8px'
               }}>
                 <span style={{
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: '11px',
-                  color: T.dataText,
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: '12px',
+                  color: '#06b6d4',
                 }}>
                   {threat.source} · {threat.country}
                 </span>

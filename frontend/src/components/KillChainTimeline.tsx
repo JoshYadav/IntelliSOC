@@ -135,17 +135,23 @@ export default function KillChainTimeline({ alerts }: KillChainTimelineProps) {
           return (
             <div
               key={phase.id}
-              className="card-premium"
               style={{
-                border: hasAlerts ? '1px solid rgba(251,146,60,0.4)' : `1px solid ${T.border}`,
-                boxShadow: hasAlerts ? '0 0 16px rgba(251,146,60,0.12)' : 'none',
-                borderRadius: '12px',
+                ...(hasAlerts ? {
+                  background: 'linear-gradient(135deg, rgba(251,146,60,0.08) 0%, rgba(13,21,38,0.9) 100%)',
+                  border: '1px solid rgba(251,146,60,0.25)',
+                  borderRadius: '10px',
+                  boxShadow: '0 0 16px rgba(251,146,60,0.08)'
+                } : {
+                  background: 'linear-gradient(135deg, #0d1526 0%, #0a0f1e 100%)',
+                  border: '1px solid rgba(6,182,212,0.08)',
+                  borderRadius: '10px'
+                }),
                 padding: '20px',
                 textAlign: 'left',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
-                transition: 'border-color 0.2s ease',
+                transition: 'all 0.2s ease',
                 gap: '12px',
               }}
             >

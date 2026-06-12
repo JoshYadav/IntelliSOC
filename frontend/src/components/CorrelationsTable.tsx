@@ -98,12 +98,13 @@ export default function CorrelationsTable({ correlations, isLoading, onRefresh }
         <div style={{
           display: 'flex',
           gap: '12px',
-          padding: '14px 18px',
-          borderRadius: '10px',
-          background: T.criticalDim,
-          border: `1px solid rgba(251, 113, 133, 0.2)`,
-          color: T.critical,
           alignItems: 'center',
+          background: 'rgba(244, 63, 94, 0.08)',
+          border: '1px solid rgba(244, 63, 94, 0.2)',
+          borderRadius: '8px',
+          padding: '12px 16px',
+          color: '#f43f5e',
+          fontSize: '13px'
         }}>
           <ShieldAlert size={20} style={{ flexShrink: 0, color: T.critical }} />
           <div style={{ fontFamily: 'var(--font-display)', fontSize: '14px', fontWeight: 500 }}>
@@ -157,7 +158,7 @@ export default function CorrelationsTable({ correlations, isLoading, onRefresh }
                       <td style={{ padding: '16px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                           <span className="copy-ip-container" onClick={() => copyToClipboard(corr.ip)} title="Click to copy IP">
-                            <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 500, fontSize: '13px', color: T.dataText }}>
+                            <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '12px', color: '#06b6d4' }}>
                               {corr.ip}
                             </span>
                             <Clipboard size={12} className="copy-ip-icon" />
