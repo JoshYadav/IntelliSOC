@@ -11,7 +11,8 @@ import {
   ToggleRight,
   PlusCircle,
   X,
-  Check
+  Check,
+  BookOpen
 } from 'lucide-react';
 
 const STEP_TYPES = [
@@ -229,20 +230,12 @@ export default function PlaybooksPage() {
           <p style={{ fontFamily: 'var(--font-display)', fontSize: '14px' }}>Loading runbooks...</p>
         </div>
       ) : playbooks.length === 0 ? (
-        <div style={{
-          textAlign: 'center',
-          padding: '4rem 1.5rem',
-          color: T.textSecondary,
-          border: `1px dashed ${T.border}`,
-          borderRadius: '16px',
-          background: T.surface,
-        }}>
-          <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '16px', fontWeight: 600, color: T.text, marginBottom: '8px' }}>
-            No blueprints mounted
-          </h3>
-          <p style={{ fontFamily: 'var(--font-display)', fontSize: '14px', maxWidth: '350px', margin: '0 auto', lineHeight: 1.5 }}>
-            System response orchestration is empty. Click "New Blueprint" to assemble automated actions.
-          </p>
+        <div className="card-premium rounded-xl p-16 flex flex-col items-center justify-center text-center">
+          <div className="w-16 h-16 rounded-full bg-[#06b6d4]/10 flex items-center justify-center mb-5 opacity-40">
+            <BookOpen size={32} className="text-[#06b6d4]" />
+          </div>
+          <p className="text-[#475569] text-sm font-medium">No playbooks configured</p>
+          <p className="text-[#334155] text-xs mt-1">Upload a playbook or define automation workflows to get started.</p>
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>

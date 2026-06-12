@@ -667,7 +667,7 @@ export default function IncidentDetailPage() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', minWidth: 0 }}>
           
           {/* Analyst Note Quick Form */}
-          <div className="op-card" style={{ padding: '20px' }}>
+          <div className="card-premium rounded-xl p-5 mb-4">
             <h4 style={{ fontSize: 'var(--text-sm)', fontWeight: 600, fontFamily: 'var(--font-display)', marginBottom: '12px', color: T.text }}>
               Append analyst note
             </h4>
@@ -677,38 +677,13 @@ export default function IncidentDetailPage() {
                 value={noteContent}
                 onChange={(e) => setNoteContent(e.target.value)}
                 disabled={isNoteSubmitting}
-                className="op-input"
-                style={{
-                  width: '100%',
-                  height: '110px',
-                  fontSize: 'var(--text-sm)',
-                  resize: 'none',
-                  boxSizing: 'border-box',
-                  marginBottom: '12px',
-                  lineHeight: '1.5',
-                  borderRadius: '8px',
-                  fontFamily: 'var(--font-display)',
-                }}
+                className="w-full bg-[#0a1628] border border-[#06b6d4]/20 rounded-lg p-3 text-sm text-[#e2e8f0] placeholder-[#475569] focus:outline-none focus:border-[#06b6d4]/60 resize-none min-h-[100px] mb-3"
               />
               <button
                 type="submit"
+                className="btn-secondary w-full"
                 disabled={isNoteSubmitting || !noteContent.trim()}
-                style={{
-                  width: '100%',
-                  background: T.primaryDim,
-                  border: `1px solid ${T.primary}`,
-                  color: T.primary,
-                  borderRadius: '8px',
-                  padding: '8px 16px',
-                  fontFamily: 'var(--font-display)',
-                  fontWeight: 500,
-                  fontSize: '13px',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px',
-                }}
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
               >
                 {isNoteSubmitting ? <Loader2 size={12} className="animate-spin" /> : <Send size={12} />}
                 Append Note
@@ -717,7 +692,7 @@ export default function IncidentDetailPage() {
           </div>
 
           {/* Trigger Playbook console */}
-          <div className="card-premium" style={{ padding: '20px' }}>
+          <div className="card-premium rounded-xl p-5 mb-4">
             <h4 style={{ fontSize: 'var(--text-sm)', fontWeight: 600, fontFamily: 'var(--font-display)', marginBottom: '12px', color: T.text }}>
               SOAR Orchestration
             </h4>
@@ -728,6 +703,12 @@ export default function IncidentDetailPage() {
                 className="op-select"
                 style={{ width: '100%', fontSize: 'var(--text-sm)', height: '36px', borderRadius: '6px' }}
               >
+                <option value="">-- Select Playbook --</option>
+                <option value="network-isolation">Network Isolation</option>
+                <option value="credential-reset">Credential Reset</option>
+                <option value="host-quarantine">Host Quarantine</option>
+                <option value="threat-intel-lookup">Threat Intel Lookup</option>
+                <option value="full-incident-response">Full Incident Response</option>
                 {playbooks.map(pb => (
                   <option key={pb.id} value={pb.id}>{pb.name}</option>
                 ))}
@@ -749,7 +730,7 @@ export default function IncidentDetailPage() {
           </div>
 
           {/* Active Playbook Execution Logs (Summary) */}
-          <div className="op-card" style={{ padding: '20px' }}>
+          <div className="card-premium rounded-xl p-5 mb-4">
             <h4 style={{ fontSize: 'var(--text-sm)', fontWeight: 600, fontFamily: 'var(--font-display)', marginBottom: '12px', color: T.text }}>
               Automation History
             </h4>
@@ -795,7 +776,7 @@ export default function IncidentDetailPage() {
                   );
                 })
               ) : (
-                <p style={{ color: T.textMuted, fontSize: 'var(--text-sm)', fontFamily: 'var(--font-display)' }}>
+                <p className="text-[#475569] text-sm italic py-4 text-center">
                   No playbook runs logged.
                 </p>
               )}

@@ -593,12 +593,7 @@ export default function EndpointDetailPage() {
       </div>
 
       {/* Detail Tabs Control */}
-      <div style={{
-        display: 'flex',
-        borderBottom: `1px solid ${T.border}`,
-        marginBottom: '2rem',
-        overflowX: 'auto',
-      }}>
+      <div className="flex border-b border-[#1e293b] mb-6 gap-1 overflow-x-auto">
         {[
           { id: 'processes', label: 'Process Tree Monitor', icon: <Terminal size={14} /> },
           { id: 'network', label: 'Socket Connection Map', icon: <Network size={14} /> },
@@ -610,27 +605,15 @@ export default function EndpointDetailPage() {
             <button
               key={tab.id}
               onClick={() => handleTabChange(tab.id as any)}
-              style={{
-                height: '48px',
-                padding: '0 1.25rem',
-                fontSize: '14px',
-                fontFamily: 'var(--font-display)',
-                fontWeight: 500,
-                color: isActive ? T.primary : T.textSecondary,
-                border: 'none',
-                background: 'none',
-                borderBottom: isActive ? `2px solid ${T.primary}` : '2px solid transparent',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                transition: 'color 0.15s ease, border-bottom-color 0.15s ease',
-              }}
+              className={isActive 
+                ? "px-4 py-2 text-sm text-[#06b6d4] font-semibold cursor-pointer relative pb-3 border-b-2 border-[#06b6d4] flex items-center gap-2 bg-transparent" 
+                : "px-4 py-2 text-sm text-[#64748b] hover:text-[#06b6d4] transition-colors cursor-pointer relative pb-3 flex items-center gap-2 bg-transparent border-none"
+              }
             >
               {tab.icon}
               {tab.label}
               {tab.badge !== undefined && tab.badge > 0 && (
-                <span className="badge badge--critical" style={{ background: T.criticalDim, color: T.critical, borderColor: 'rgba(251,113,133,0.25)', fontSize: '10px', marginLeft: '4px' }}>
+                <span className="ml-1.5 bg-[#f43f5e]/20 text-[#f43f5e] text-xs px-1.5 py-0.5 rounded-full font-mono">
                   {tab.badge}
                 </span>
               )}

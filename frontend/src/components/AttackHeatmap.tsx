@@ -59,7 +59,7 @@ export default function AttackHeatmap({ alerts }: AttackHeatmapProps) {
   const LABEL_WIDTH = 36;
 
   return (
-    <div style={{ overflowX: 'auto', paddingBottom: '12px' }}>
+    <div className="card-premium rounded-xl p-5 w-full" style={{ overflowX: 'auto', paddingBottom: '12px' }}>
       <div style={{ display: 'inline-block', minWidth: 'fit-content' }}>
         {/* Hour labels */}
         <div style={{ display: 'flex', marginLeft: `${LABEL_WIDTH + GAP}px`, marginBottom: '4px' }}>

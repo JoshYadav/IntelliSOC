@@ -230,27 +230,22 @@ export default function KillChainTimeline({ alerts }: KillChainTimelineProps) {
             const dateStr = timestamp.toLocaleDateString();
             const sevColor = getSeverityColor(alert.severity);
 
+            let borderClass = "border-l-[#06b6d4]";
+            if (phase.name === "Lateral Movement") borderClass = "border-l-[#f97316]";
+            else if (phase.name === "Privilege Escalation") borderClass = "border-l-[#f43f5e]";
+            else if (phase.name === "Persistence") borderClass = "border-l-[#f97316]";
+            else if (phase.name === "Execution") borderClass = "border-l-[#f97316]";
+
             return (
               <div
                 key={alert.id}
+                className={`card-premium rounded-lg p-4 mb-3 border-l-4 ${borderClass}`}
                 style={{
-                  background: T.surface,
-                  border: `1px solid ${T.border}`,
-                  borderLeft: `3px solid ${sevColor}`,
-                  borderRadius: '10px',
-                  padding: '16px 20px',
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'flex-start',
                   flexWrap: 'wrap',
                   gap: '12px',
-                  transition: 'border-color 0.2s ease',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = T.borderHover;
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = T.border;
                 }}
               >
                 <div style={{ flex: 1, minWidth: '240px' }}>
@@ -278,11 +273,11 @@ export default function KillChainTimeline({ alerts }: KillChainTimelineProps) {
                     )}
                   </div>
                   
-                  <p style={{ fontSize: 'var(--text-sm)', color: T.textSecondary, margin: '8px 0 12px 0', lineHeight: 1.55, fontFamily: 'var(--font-display)', wordBreak: 'break-all', overflowWrap: 'anywhere' }}>
+                  <p className="text-[#e2e8f0] text-sm mt-1" style={{ lineHeight: 1.55, fontFamily: 'var(--font-display)', wordBreak: 'break-all', overflowWrap: 'anywhere' }}>
                     {alert.explanation || 'Suspicious network action detected.'}
                   </p>
                   
-                  <div style={{ display: 'flex', gap: '16px', fontSize: 'var(--text-xs)', color: T.textMuted, fontFamily: 'var(--font-mono)' }}>
+                  <div className="font-mono text-xs text-[#94a3b8]" style={{ display: 'flex', gap: '16px' }}>
                     {alert.ip && (
                       <span>src_ip: <strong style={{ color: T.dataText, fontWeight: 400 }}>{alert.ip}</strong></span>
                     )}
@@ -294,7 +289,7 @@ export default function KillChainTimeline({ alerts }: KillChainTimelineProps) {
 
                 {/* Metadata: Time & Risk */}
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', textAlign: 'right', gap: '6px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: 'var(--text-xs)', fontFamily: 'var(--font-mono)', color: T.textMuted }}>
+                  <div className="text-[#64748b] text-xs mt-2" style={{ display: 'flex', alignItems: 'center', gap: '6px', fontFamily: 'var(--font-mono)' }}>
                     <span>{dateStr}</span>
                     <span>•</span>
                     <strong style={{ color: T.textSecondary, fontWeight: 400 }}>{timeStr}</strong>
