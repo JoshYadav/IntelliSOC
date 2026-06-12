@@ -207,6 +207,7 @@ function AttackArc({
 
 export default function GeoIPMap({ attackers: _attackers, socCore, alerts = [], logsProcessed = 0 }: GeoIPMapProps) {
   const [hoveredNodeIp, setHoveredNodeIp] = React.useState<string | null>(null);
+  const [hoveredSoc, setHoveredSoc] = React.useState<boolean>(false);
 
   const socCoordinates: [number, number] = [socCore.lng, socCore.lat];
 
@@ -642,25 +643,56 @@ export default function GeoIPMap({ attackers: _attackers, socCore, alerts = [], 
                       }}
                     />
 
-                    {/* Label card above */}
+                    {/* Interactive Hit Area for SOC Core Hover */}
                     <div
                       style={{
                         position: 'absolute',
-                        bottom: '124px',
-                        fontFamily: 'var(--font-display)',
-                        fontWeight: 700,
-                        fontSize: '12px',
-                        color: T.primary,
-                        background: 'rgba(129, 140, 248, 0.1)',
-                        border: '1px solid rgba(129, 140, 248, 0.25)',
-                        borderRadius: '6px',
-                        padding: '4px 8px',
-                        whiteSpace: 'nowrap',
-                        pointerEvents: 'none',
+                        width: '48px',
+                        height: '48px',
+                        borderRadius: '50%',
+                        cursor: 'pointer',
+                        pointerEvents: 'auto',
+                        background: 'transparent',
+                        zIndex: 10,
                       }}
-                    >
-                      SOC_CORE
-                    </div>
+                      onMouseEnter={() => setHoveredSoc(true)}
+                      onMouseLeave={() => setHoveredSoc(false)}
+                    />
+
+                    {/* Label card above */}
+                    {hoveredSoc && (
+                      <div
+                        style={{
+                          position: 'absolute',
+                          bottom: '124px',
+                          fontFamily: 'var(--font-display)',
+                          fontWeight: 700,
+                          fontSize: '12px',
+                          color: T.primary,
+                          background: 'rgba(8, 13, 22, 0.92)',
+                          border: '1px solid rgba(129, 140, 248, 0.4)',
+                          borderRadius: '8px',
+                          padding: '6px 10px',
+                          whiteSpace: 'nowrap',
+                          pointerEvents: 'none',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '2px',
+                          boxShadow: '0 4px 12px rgba(0,0,0,0.5)',
+                          zIndex: 20,
+                        }}
+                      >
+                        SOC_CORE Target
+                        <div style={{
+                          fontFamily: 'var(--font-mono)',
+                          fontWeight: 500,
+                          fontSize: '11px',
+                          color: T.textSecondary,
+                        }}>
+                          Status: Active
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </foreignObject>
               </g>
@@ -925,7 +957,7 @@ export default function GeoIPMap({ attackers: _attackers, socCore, alerts = [], 
                       cx="50%"
                       cy="50%"
                       innerRadius={32}
-                      outerRadius={52}
+                      outerRadius={45}
                       paddingAngle={3}
                       dataKey="value"
                       stroke="none"

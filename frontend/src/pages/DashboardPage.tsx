@@ -10,7 +10,7 @@ import GeoIPMap from '../components/GeoIPMap';
 import { COUNTRY_CENTERS } from '../components/worldMapCenters';
 import KillChainTimeline from '../components/KillChainTimeline';
 import CorrelationsTable from '../components/CorrelationsTable';
-import { Download, Loader2, AlertCircle, RefreshCw, Sparkles, CheckCircle } from 'lucide-react';
+import { Download, Loader2, AlertCircle, RefreshCw, Sparkles, CheckCircle, Plus } from 'lucide-react';
 import { getAlerts, getAnalytics, downloadReport, getSessions, getCorrelations, getAiSummary } from '../api/client';
 import type { Alert, AnalyticsData, LogFormat, CorrelationData } from '../types';
 
@@ -32,7 +32,7 @@ const T = {
 };
 
 export default function DashboardPage() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
@@ -97,6 +97,7 @@ export default function DashboardPage() {
   useEffect(() => {
     const sessionParam = searchParams.get('session');
     if (sessionParam) {
+      localStorage.setItem('intelliSOC_lastSession', sessionParam);
       setSessionId(sessionParam);
       getSessions().then(list => {
         const match = list.find(s => s.id === sessionParam);
@@ -109,8 +110,13 @@ export default function DashboardPage() {
       }).catch(err => {
         console.error('Failed to load session metadata:', err);
       });
+    } else {
+      const lastSession = localStorage.getItem('intelliSOC_lastSession');
+      if (lastSession) {
+        setSearchParams({ session: lastSession });
+      }
     }
-  }, [searchParams]);
+  }, [searchParams, setSearchParams]);
 
   // Fetch AI Summary when incidentId changes
   useEffect(() => {
@@ -159,6 +165,8 @@ export default function DashboardPage() {
   }, [fetchData, fetchCorrelations, sessionId]);
 
   const handleUploadSuccess = (newSessionId: string, logs: number, alertCount: number, format: string, newIncidentId?: string | null) => {
+    localStorage.setItem('intelliSOC_lastSession', newSessionId);
+    setSearchParams({ session: newSessionId });
     setSessionId(newSessionId);
     setLogsProcessed(logs);
     setAlertsGenerated(alertCount);
@@ -321,29 +329,63 @@ export default function DashboardPage() {
               ID: {sessionId.substring(0, 8)}...
             </span>
           </div>
-          <button
-            id="download-report-btn"
-            onClick={handleDownloadReport}
-            style={{
-              background: T.primaryDim,
-              border: `1px solid ${T.primary}`,
-              color: T.primary,
-              borderRadius: '8px',
-              padding: '8px 16px',
-              fontFamily: 'var(--font-display)',
-              fontWeight: 500,
-              fontSize: '13px',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              transition: 'background-color 0.15s ease',
-            }}
-            onMouseEnter={e => e.currentTarget.style.backgroundColor = 'rgba(129,140,248,0.2)'}
-            onMouseLeave={e => e.currentTarget.style.backgroundColor = T.primaryDim}
-          >
-            <Download size={14} /> Export SigInt
-          </button>
+          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+            <button
+              onClick={() => {
+                localStorage.removeItem('intelliSOC_lastSession');
+                setSearchParams({});
+                setSessionId(null);
+              }}
+              style={{
+                background: 'transparent',
+                border: `1px solid ${T.border}`,
+                color: T.textSecondary,
+                borderRadius: '8px',
+                padding: '8px 16px',
+                fontFamily: 'var(--font-display)',
+                fontWeight: 500,
+                fontSize: '13px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                transition: 'all 0.15s ease',
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.borderColor = T.primary;
+                e.currentTarget.style.color = T.text;
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.borderColor = T.border;
+                e.currentTarget.style.color = T.textSecondary;
+              }}
+            >
+              <Plus size={14} /> New Log
+            </button>
+            <button
+              id="download-report-btn"
+              onClick={handleDownloadReport}
+              style={{
+                background: T.primaryDim,
+                border: `1px solid ${T.primary}`,
+                color: T.primary,
+                borderRadius: '8px',
+                padding: '8px 16px',
+                fontFamily: 'var(--font-display)',
+                fontWeight: 500,
+                fontSize: '13px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                transition: 'background-color 0.15s ease',
+              }}
+              onMouseEnter={e => e.currentTarget.style.backgroundColor = 'rgba(129,140,248,0.2)'}
+              onMouseLeave={e => e.currentTarget.style.backgroundColor = T.primaryDim}
+            >
+              <Download size={14} /> Export SigInt
+            </button>
+          </div>
         </div>
       )}
 
