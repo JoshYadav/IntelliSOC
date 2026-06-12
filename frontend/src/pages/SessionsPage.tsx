@@ -75,31 +75,46 @@ export default function SessionsPage() {
         {cards.map((card, i) => (
           <div
             key={card.label}
-            className="card-premium"
             style={{
+              background: 'linear-gradient(135deg, #0d1526 0%, #0a0f1e 100%)',
+              border: '1px solid rgba(6, 182, 212, 0.12)',
+              borderRadius: '12px',
               padding: '24px',
+              boxShadow: '0 0 24px rgba(6, 182, 212, 0.06), inset 0 1px 0 rgba(255,255,255,0.04)',
+              transition: 'all 0.3s ease',
+              position: 'relative',
+              overflow: 'hidden',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'center',
               animation: 'fadeUp 0.4s ease both',
               animationDelay: `${i * 60}ms`,
             }}
+            onMouseEnter={e => {
+              e.currentTarget.style.borderColor = 'rgba(6, 182, 212, 0.35)';
+              e.currentTarget.style.boxShadow = '0 0 32px rgba(6, 182, 212, 0.14), inset 0 1px 0 rgba(255,255,255,0.06)';
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.borderColor = 'rgba(6, 182, 212, 0.12)';
+              e.currentTarget.style.boxShadow = '0 0 24px rgba(6, 182, 212, 0.06), inset 0 1px 0 rgba(255,255,255,0.04)';
+            }}
           >
             <div style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: 'var(--text-4xl)',
+              fontSize: '2.2rem',
               fontWeight: 700,
-              color: card.color,
-              lineHeight: 1.1,
+              fontFamily: "'JetBrains Mono', monospace",
+              color: card.color || '#e2e8f0',
               marginBottom: '8px',
             }}>
               {card.value}
             </div>
             <div style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: 'var(--text-sm)',
-              fontWeight: 500,
-              color: T.textSecondary,
+              fontSize: '11px',
+              letterSpacing: '0.1em',
+              textTransform: 'uppercase',
+              color: '#64748b',
+              marginTop: '6px',
+              fontFamily: "'Inter', sans-serif"
             }}>
               {card.label}
             </div>

@@ -127,14 +127,14 @@ export default function CorrelationsTable({ correlations, isLoading, onRefresh }
           <div style={{ overflowX: 'auto' }}>
             <table className="table-premium" style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
-                <tr>
-                  <th style={{ padding: '16px', borderBottom: `1px solid ${T.border}`, fontFamily: 'var(--font-display)', color: T.textSecondary, fontWeight: 600, fontSize: 'var(--text-xs)' }}>Attacker IP</th>
-                  <th style={{ padding: '16px', borderBottom: `1px solid ${T.border}`, fontFamily: 'var(--font-display)', color: T.textSecondary, fontWeight: 600, fontSize: 'var(--text-xs)' }}>Sessions</th>
-                  <th style={{ padding: '16px', borderBottom: `1px solid ${T.border}`, fontFamily: 'var(--font-display)', color: T.textSecondary, fontWeight: 600, fontSize: 'var(--text-xs)' }}>Alert count</th>
-                  <th style={{ padding: '16px', borderBottom: `1px solid ${T.border}`, fontFamily: 'var(--font-display)', color: T.textSecondary, fontWeight: 600, fontSize: 'var(--text-xs)' }}>Max risk</th>
-                  <th style={{ padding: '16px', borderBottom: `1px solid ${T.border}`, fontFamily: 'var(--font-display)', color: T.textSecondary, fontWeight: 600, fontSize: 'var(--text-xs)' }}>Severity breakdown</th>
-                  <th style={{ padding: '16px', borderBottom: `1px solid ${T.border}`, fontFamily: 'var(--font-display)', color: T.textSecondary, fontWeight: 600, fontSize: 'var(--text-xs)' }}>Linked sessions</th>
-                  <th style={{ padding: '16px', borderBottom: `1px solid ${T.border}`, fontFamily: 'var(--font-display)', color: T.textSecondary, fontWeight: 600, fontSize: 'var(--text-xs)', textAlign: 'right' }}>Last observed</th>
+                <tr style={{ background: 'rgba(6, 182, 212, 0.05)' }}>
+                  <th style={{ padding: '12px 16px', fontSize: '11px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#64748b' }}>Attacker IP</th>
+                  <th style={{ padding: '12px 16px', fontSize: '11px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#64748b' }}>Sessions</th>
+                  <th style={{ padding: '12px 16px', fontSize: '11px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#64748b' }}>Alert count</th>
+                  <th style={{ padding: '12px 16px', fontSize: '11px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#64748b' }}>Max risk</th>
+                  <th style={{ padding: '12px 16px', fontSize: '11px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#64748b' }}>Severity breakdown</th>
+                  <th style={{ padding: '12px 16px', fontSize: '11px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#64748b' }}>Linked sessions</th>
+                  <th style={{ padding: '12px 16px', fontSize: '11px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#64748b', textAlign: 'right' }}>Last observed</th>
                 </tr>
               </thead>
               <tbody>
@@ -146,10 +146,13 @@ export default function CorrelationsTable({ correlations, isLoading, onRefresh }
                     <tr
                       key={corr.ip}
                       style={{
-                        borderBottom: `1px solid ${T.border}`,
+                        borderBottom: '1px solid rgba(255,255,255,0.03)',
+                        transition: 'background 0.2s ease',
+                        cursor: 'pointer',
                         backgroundColor: isCrossSession ? 'rgba(251, 113, 133, 0.02)' : 'transparent',
-                        transition: 'background-color 0.15s ease',
                       }}
+                      onMouseEnter={e => e.currentTarget.style.background = 'rgba(6, 182, 212, 0.05)'}
+                      onMouseLeave={e => e.currentTarget.style.background = isCrossSession ? 'rgba(251, 113, 133, 0.02)' : 'transparent'}
                     >
                       <td style={{ padding: '16px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>

@@ -56,15 +56,15 @@ export default function AlertsTable({ alerts }: AlertsTableProps) {
       <div style={{ overflowX: 'auto' }}>
         <table className="table-premium">
           <thead>
-            <tr>
-              <th>Type</th>
-              <th>Source IP</th>
-              <th>User</th>
-              <th>Severity</th>
-              <th>Risk Score</th>
-              <th>MITRE Tactic</th>
-              <th>Events</th>
-              <th>Analyst Note</th>
+            <tr style={{ background: 'rgba(6, 182, 212, 0.05)' }}>
+              <th style={{ padding: '12px 16px', fontSize: '11px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#64748b' }}>Type</th>
+              <th style={{ padding: '12px 16px', fontSize: '11px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#64748b' }}>Source IP</th>
+              <th style={{ padding: '12px 16px', fontSize: '11px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#64748b' }}>User</th>
+              <th style={{ padding: '12px 16px', fontSize: '11px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#64748b' }}>Severity</th>
+              <th style={{ padding: '12px 16px', fontSize: '11px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#64748b' }}>Risk Score</th>
+              <th style={{ padding: '12px 16px', fontSize: '11px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#64748b' }}>MITRE Tactic</th>
+              <th style={{ padding: '12px 16px', fontSize: '11px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#64748b' }}>Events</th>
+              <th style={{ padding: '12px 16px', fontSize: '11px', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#64748b' }}>Analyst Note</th>
             </tr>
           </thead>
           <tbody>
@@ -75,7 +75,12 @@ export default function AlertsTable({ alerts }: AlertsTableProps) {
                   style={{
                     animation: 'fadeUp 0.3s ease both',
                     animationDelay: `${index * 20}ms`,
+                    borderBottom: '1px solid rgba(255,255,255,0.03)',
+                    transition: 'background 0.2s ease',
+                    cursor: 'pointer'
                   }}
+                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(6, 182, 212, 0.05)'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                 >
                   {/* Type Badge */}
                   <td>

@@ -492,24 +492,21 @@ function ThreatFeedPanel() {
             <div
               key={threat.id}
               style={{
-                padding: '8px 10px',
-                borderRadius: '8px',
                 background: 'rgba(6, 182, 212, 0.03)',
-                border: 'none',
-                borderLeft: `3px solid ${getSeverityBorderColor(threat.severity)}`,
-                margin: '4px 0',
-                position: 'relative',
+                borderRadius: '6px',
+                borderLeft: `3px solid ${threat.severity === 'CRITICAL' ? '#f43f5e' : threat.severity === 'HIGH' ? '#fb923c' : threat.severity === 'MEDIUM' ? '#60a5fa' : '#10b981'}`,
+                padding: '8px 10px',
+                marginBottom: '4px',
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
+                position: 'relative'
               }}
               onMouseEnter={e => {
                 e.currentTarget.style.background = 'rgba(6, 182, 212, 0.08)';
-                e.currentTarget.style.borderLeftColor = getSeverityBorderColor(threat.severity);
                 e.currentTarget.style.filter = 'brightness(1.2)';
               }}
               onMouseLeave={e => {
                 e.currentTarget.style.background = 'rgba(6, 182, 212, 0.03)';
-                e.currentTarget.style.borderLeftColor = getSeverityBorderColor(threat.severity);
                 e.currentTarget.style.filter = 'none';
               }}
             >

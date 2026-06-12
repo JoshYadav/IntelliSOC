@@ -35,11 +35,10 @@ html, body, #root {
 
 body {
   background:
-    radial-gradient(ellipse at 15% 40%, rgba(6, 182, 212, 0.04) 0%, transparent 55%),
-    radial-gradient(ellipse at 85% 15%, rgba(59, 130, 246, 0.04) 0%, transparent 55%),
-    radial-gradient(ellipse at 50% 90%, rgba(129, 140, 248, 0.03) 0%, transparent 50%),
-    #030712;
-  background-attachment: fixed;
+    radial-gradient(ellipse at 15% 50%, rgba(6, 182, 212, 0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at 85% 20%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
+    #030712 !important;
+  background-attachment: fixed !important;
 }
 
 ::-webkit-scrollbar { width: 4px; height: 4px; }

@@ -1,4 +1,4 @@
-import CountUp from 'react-countup';
+
 import type { AnalyticsData } from '../types';
 
 interface SummaryCardsProps {
@@ -66,16 +66,27 @@ export default function SummaryCards({ analytics, logsProcessed, alertsGenerated
       {cards.map((card, i) => (
         <div
           key={card.label}
-          className="card-premium"
           style={{
+            background: 'linear-gradient(135deg, #0d1526 0%, #0a0f1e 100%)',
+            border: '1px solid rgba(6, 182, 212, 0.12)',
+            borderRadius: '12px',
             padding: '24px',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '12px',
+            boxShadow: '0 0 24px rgba(6, 182, 212, 0.06), inset 0 1px 0 rgba(255,255,255,0.04)',
+            transition: 'all 0.3s ease',
             position: 'relative',
             overflow: 'hidden',
+            display: 'flex',
+            flexDirection: 'column',
             animation: 'fade-in-up 0.4s ease both',
             animationDelay: `${i * 60}ms`,
+          }}
+          onMouseEnter={e => {
+            e.currentTarget.style.borderColor = 'rgba(6, 182, 212, 0.35)';
+            e.currentTarget.style.boxShadow = '0 0 32px rgba(6, 182, 212, 0.14), inset 0 1px 0 rgba(255,255,255,0.06)';
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.borderColor = 'rgba(6, 182, 212, 0.12)';
+            e.currentTarget.style.boxShadow = '0 0 24px rgba(6, 182, 212, 0.06), inset 0 1px 0 rgba(255,255,255,0.04)';
           }}
         >
           {/* Decorative top-right glow accent */}
@@ -88,23 +99,22 @@ export default function SummaryCards({ analytics, logsProcessed, alertsGenerated
 
           {/* Large Number */}
           <div style={{
-            fontFamily: "'JetBrains Mono', monospace",
-            fontSize: '2.5rem',
+            fontSize: '2.2rem',
             fontWeight: 700,
-            color: card.color,
-            lineHeight: 1.1,
+            fontFamily: "'JetBrains Mono', monospace",
+            color: card.color || '#e2e8f0',
           }}>
-            <CountUp end={Number(card.value)} duration={2} separator="," />
+            {Number(card.value).toLocaleString()}
           </div>
 
           {/* Label Below */}
           <div style={{
-            fontFamily: "'Inter', sans-serif",
             fontSize: '11px',
-            fontWeight: 500,
             letterSpacing: '0.1em',
             textTransform: 'uppercase',
             color: '#64748b',
+            marginTop: '6px',
+            fontFamily: "'Inter', sans-serif"
           }}>
             {card.label}
           </div>
