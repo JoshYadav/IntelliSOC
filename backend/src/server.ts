@@ -12,6 +12,7 @@ import { correlationRoutes } from './routes/correlationRoutes';
 import { markStaleEndpoints } from './services/endpointService';
 
 const app = express();
+app.set('trust proxy', 1);
 const PORT = process.env.PORT || 5000;
 
 app.use((req: import('express').Request, res: import('express').Response, next: import('express').NextFunction) => {

@@ -704,14 +704,27 @@ export default function IncidentDetailPage() {
             <select
               value={selectedPlaybookId}
               onChange={(e) => setSelectedPlaybookId(e.target.value)}
-              className="w-full bg-[#060f1e] border border-[#1e293b] rounded-lg px-3 py-2.5 text-sm text-[#e2e8f0] mb-3 focus:outline-none focus:border-[#06b6d4]/50"
+              style={{
+                width: '100%',
+                background: '#060f1e',
+                border: '1px solid #1e293b',
+                borderRadius: '8px',
+                padding: '10px 12px',
+                color: '#e2e8f0',
+                fontSize: '14px',
+                marginBottom: '12px',
+                outline: 'none'
+              }}
             >
-              <option value="">— No playbooks configured —</option>
+              <option value="">— Select Playbook —</option>
+              {playbooks.map((pb: any) => (
+                <option key={pb.id} value={pb.id}>{pb.name}</option>
+              ))}
             </select>
             <button
               onClick={handleTriggerPlaybook}
-              disabled={true}
-              className="w-full py-2.5 text-sm font-semibold flex items-center justify-center gap-2 opacity-40 cursor-not-allowed bg-gradient-to-r from-[#06b6d4] to-[#3b82f6] text-white rounded-lg"
+              disabled={isPlaybookTriggering || !selectedPlaybookId}
+              className="btn-primary w-full py-2.5 text-sm font-semibold flex items-center justify-center gap-2"
             >
               {isPlaybookTriggering ? (
                 <Loader2 size={12} className="animate-spin" />
