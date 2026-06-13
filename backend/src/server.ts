@@ -15,11 +15,27 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(cors({
-  origin: process.env.ALLOWED_ORIGINS 
-    ? process.env.ALLOWED_ORIGINS.split(",") 
-    : "*",
+  origin: (origin, callback) => {
+    // Allow requests with no origin (Render health checks, Postman, etc.)
+    if (!origin) return callback(null, true);
+    
+    // Allow any vercel.app subdomain (covers preview + production deployments)
+    if (origin.endsWith('.vercel.app')) return callback(null, true);
+    
+    // Allow localhost for development
+    if (origin.startsWith('http://localhost')) return callback(null, true);
+    
+    // Block everything else
+    callback(new Error('Not allowed by CORS'));
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   credentials: true,
+  optionsSuccessStatus: 200
 }));
+
+// Handle preflight for ALL routes
+app.options('*', cors());
 
 // ── Rate limiting ─────────────────────────────────────────────────────────────
 // General API limit: 200 requests per 15 minutes per IP
@@ -44,8 +60,8 @@ app.use('/api', generalLimiter);
 app.use('/api/logs/upload', uploadLimiter);
 
 // ── Body parsing ──────────────────────────────────────────────────────────────
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // ── Routes ────────────────────────────────────────────────────────────────────
 app.use('/api', logRoutes);
