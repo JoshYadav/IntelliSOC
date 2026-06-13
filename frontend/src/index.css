@@ -216,3 +216,83 @@ select option {
   background: #0a1628;
   color: #e2e8f0;
 }
+
+/* Reset browser default button borders globally */
+button {
+  border: none !important;
+  outline: none !important;
+}
+button:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Tab bar active/inactive styles */
+.tab-inactive {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  font-size: 0.875rem;
+  color: #64748b;
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent !important;
+  background: transparent !important;
+  transition: color 0.2s, border-color 0.2s;
+}
+.tab-inactive:hover {
+  color: #94a3b8;
+  border-bottom-color: #334155 !important;
+}
+.tab-active {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  font-size: 0.875rem;
+  color: #06b6d4;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 2px solid #06b6d4 !important;
+  background: transparent !important;
+}
+.tab-count-badge {
+  background: rgba(244, 63, 94, 0.2);
+  color: #f43f5e;
+  font-size: 0.7rem;
+  padding: 1px 6px;
+  border-radius: 9999px;
+  font-family: 'JetBrains Mono', monospace;
+  line-height: 1.4;
+}
+
+/* Kill chain event cards */
+.killchain-card {
+  background: linear-gradient(135deg, #0d1526 0%, #0a1020 100%);
+  border: 1px solid rgba(6, 182, 212, 0.12);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  transition: border-color 0.2s;
+}
+.killchain-card:hover {
+  border-color: rgba(6, 182, 212, 0.25);
+}
+
+/* Right panel cards on incident detail */
+.panel-card {
+  background: linear-gradient(135deg, #0d1526 0%, #0a1020 100%);
+  border: 1px solid rgba(6, 182, 212, 0.12);
+  border-radius: 12px;
+  padding: 20px;
+}
+.panel-card-title {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 12px;
+}

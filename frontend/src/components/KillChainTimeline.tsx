@@ -81,14 +81,7 @@ const getSeverityColor = (sev: string) => {
   }
 };
 
-const getBorderColor = (phaseName: string) => {
-  if (phaseName?.includes('Lateral')) return 'border-l-[#3b82f6]';
-  if (phaseName?.includes('Privilege')) return 'border-l-[#f43f5e]';
-  if (phaseName?.includes('Persistence')) return 'border-l-[#f97316]';
-  if (phaseName?.includes('Execution')) return 'border-l-[#a855f7]';
-  if (phaseName?.includes('Defense')) return 'border-l-[#eab308]';
-  return 'border-l-[#06b6d4]';
-};
+
 
 export default function KillChainTimeline({ alerts }: KillChainTimelineProps) {
   // Count alerts per kill chain phase
@@ -123,6 +116,27 @@ export default function KillChainTimeline({ alerts }: KillChainTimelineProps) {
   const sortedAlerts = [...alerts].sort(
     (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
   );
+
+  const getBorderColor = (tactic: string): string => {
+    if (!tactic) return 'border-l-[#06b6d4]';
+    if (tactic.includes('Lateral')) return 'border-l-[#3b82f6]';
+    if (tactic.includes('Privilege')) return 'border-l-[#f43f5e]';
+    if (tactic.includes('Persistence')) return 'border-l-[#f97316]';
+    if (tactic.includes('Execution')) return 'border-l-[#a855f7]';
+    if (tactic.includes('Defense')) return 'border-l-[#eab308]';
+    if (tactic.includes('Command')) return 'border-l-[#06b6d4]';
+    return 'border-l-[#06b6d4]';
+  };
+
+  const getTacticColor = (tactic: string): string => {
+    if (!tactic) return 'text-[#06b6d4]';
+    if (tactic.includes('Lateral')) return 'text-[#3b82f6]';
+    if (tactic.includes('Privilege')) return 'text-[#f43f5e]';
+    if (tactic.includes('Persistence')) return 'text-[#f97316]';
+    if (tactic.includes('Execution')) return 'text-[#a855f7]';
+    if (tactic.includes('Defense')) return 'text-[#eab308]';
+    return 'text-[#06b6d4]';
+  };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '3rem', animation: 'fadeUp 0.4s ease both' }}>
@@ -240,63 +254,34 @@ export default function KillChainTimeline({ alerts }: KillChainTimelineProps) {
             const sevColor = getSeverityColor(alert.severity);
 
             return (
-              <div
+              <div 
                 key={alert.id}
-                className={`card-premium rounded-lg p-4 mb-3 border-l-4 ${getBorderColor(phase.name)}`}
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'flex-start',
-                  flexWrap: 'wrap',
-                  gap: '12px',
-                }}
+                className={`killchain-card border-l-4 ${getBorderColor(phase.name)}`}
               >
-                <div style={{ flex: 1, minWidth: '240px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginBottom: '6px' }}>
-                    <span className="text-sm font-semibold text-[#e2e8f0]">
-                      {alert.type.replace(/_/g, ' ').charAt(0).toUpperCase() + alert.type.replace(/_/g, ' ').slice(1).toLowerCase()}
+                <div className="flex justify-between items-start mb-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-semibold text-[#e2e8f0] capitalize">
+                      {alert.type.replace(/_/g, ' ').toLowerCase()}
                     </span>
-                    
-                    <span className={`text-xs font-medium ml-2 ${getBorderColor(phase.name).replace('border-l-', 'text-')}`}>
+                    <span className={`text-xs font-medium ${getTacticColor(phase.name)}`}>
                       {phase.name}
                     </span>
-
-                    {alert.count > 1 && (
-                      <span className="badge" style={{
-                        background: 'transparent',
-                        borderColor: T.border,
-                        color: T.textSecondary,
-                      }}>
-                        {alert.count} events
-                      </span>
-                    )}
                   </div>
-                  
-                  <p className="text-xs text-[#94a3b8] mt-1.5 leading-relaxed" style={{ wordBreak: 'break-all', overflowWrap: 'anywhere' }}>
-                    {alert.explanation || 'Suspicious network action detected.'}
+                  <div className="text-right shrink-0 ml-4">
+                    <span className="text-xs text-[#475569]">{dateStr} • {timeStr}</span>
+                    <div className="text-xs font-mono text-[#f97316] font-semibold mt-0.5">
+                      Risk: {alert.riskScore}/100
+                    </div>
+                  </div>
+                </div>
+                <p className="text-xs text-[#94a3b8] leading-relaxed mt-1">
+                  {alert.explanation || 'Suspicious network action detected.'}
+                </p>
+                {alert.ip && (
+                  <p className="text-xs font-mono text-[#475569] mt-2">
+                    src_ip: <span className="text-[#06b6d4]">{alert.ip}</span>
                   </p>
-                  
-                  <div className="text-xs font-mono text-[#475569] mt-2" style={{ display: 'flex', gap: '16px' }}>
-                    {alert.ip && (
-                      <span>src_ip: <strong style={{ color: T.dataText, fontWeight: 400 }}>{alert.ip}</strong></span>
-                    )}
-                    {alert.user && (
-                      <span>user: <strong style={{ color: T.textSecondary, fontWeight: 400 }}>{alert.user}</strong></span>
-                    )}
-                  </div>
-                </div>
-
-                {/* Metadata: Time & Risk */}
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', textAlign: 'right', gap: '6px' }}>
-                  <div className="text-xs text-[#334155]" style={{ display: 'flex', alignItems: 'center', gap: '6px', fontFamily: 'var(--font-mono)' }}>
-                    <span>{dateStr}</span>
-                    <span>•</span>
-                    <strong style={{ color: T.textSecondary, fontWeight: 400 }}>{timeStr}</strong>
-                  </div>
-                  <span className="text-xs font-mono text-[#f97316] font-semibold">
-                    Risk: {alert.riskScore}/100
-                  </span>
-                </div>
+                )}
               </div>
             );
           })}

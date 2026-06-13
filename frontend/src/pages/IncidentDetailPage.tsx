@@ -667,113 +667,64 @@ export default function IncidentDetailPage() {
         <div className="flex flex-col gap-4">
           
           {/* Analyst Note Quick Form */}
-          <div className="card-premium rounded-xl p-5">
-            <h4 className="text-sm font-semibold text-[#94a3b8] uppercase tracking-widest mb-3">
-              Append analyst note
-            </h4>
+          <div className="panel-card">
+            <p className="panel-card-title">Append Analyst Note</p>
             <form onSubmit={handleSubmitNote}>
-              <textarea
-                placeholder="Log observations, escalation instructions..."
-                value={noteContent}
-                onChange={(e) => setNoteContent(e.target.value)}
-                disabled={isNoteSubmitting}
-                className="w-full bg-[#060f1e] border border-[#1e293b] rounded-lg p-3 text-sm text-[#e2e8f0] placeholder-[#334155] focus:outline-none focus:border-[#06b6d4]/50 resize-none h-24 block"
-              />
-              <button
-                type="submit"
-                className="mt-3 btn-secondary text-xs px-4 py-2 flex items-center gap-2"
-                disabled={isNoteSubmitting || !noteContent.trim()}
-              >
-                {isNoteSubmitting ? <Loader2 size={12} className="animate-spin" /> : <Send size={12} />}
-                Append Note
-              </button>
+              <div className="flex flex-col gap-3">
+                <textarea
+                  placeholder="Log observations, escalation instructions..."
+                  value={noteContent}
+                  onChange={(e) => setNoteContent(e.target.value)}
+                  disabled={isNoteSubmitting}
+                  className="w-full bg-[#060f1e] border border-[#1e293b] rounded-lg p-3 text-sm text-[#e2e8f0] placeholder-[#334155] resize-none h-24 focus:outline-none focus:border-[#06b6d4]/50"
+                />
+                <button
+                  type="submit"
+                  disabled={isNoteSubmitting || !noteContent.trim()}
+                  className="btn-secondary text-xs px-4 py-2 w-full flex items-center justify-center gap-2"
+                >
+                  {isNoteSubmitting ? <Loader2 size={12} className="animate-spin" /> : <Send size={12} />}
+                  Append Note
+                </button>
+              </div>
             </form>
           </div>
 
           {/* Trigger Playbook console */}
-          <div className="card-premium rounded-xl p-5">
-            <h4 className="text-sm font-semibold text-[#94a3b8] uppercase tracking-widest mb-3">
-              SOAR Orchestration
-            </h4>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              <select
-                value={selectedPlaybookId}
-                onChange={(e) => setSelectedPlaybookId(e.target.value)}
-                className="w-full bg-[#060f1e] border border-[#1e293b] rounded-lg px-3 py-2.5 text-sm text-[#e2e8f0] focus:outline-none focus:border-[#06b6d4]/50 mb-3"
-              >
-                <option value="">-- Select Playbook --</option>
-                {playbooks.map(pb => (
-                  <option key={pb.id} value={pb.id}>{pb.name}</option>
-                ))}
-              </select>
-              
-              <button
-                className="w-full btn-primary py-2.5 text-sm font-semibold flex items-center justify-center gap-2"
-                onClick={handleTriggerPlaybook}
-                disabled={isPlaybookTriggering || !selectedPlaybookId}
-              >
-                {isPlaybookTriggering ? (
-                  <Loader2 size={12} className="animate-spin" />
-                ) : (
-                  <Play size={12} />
-                )}
-                Launch Playbook
-              </button>
-            </div>
+          <div className="panel-card">
+            <p className="panel-card-title">SOAR Orchestration</p>
+            <select
+              value={selectedPlaybookId}
+              onChange={(e) => setSelectedPlaybookId(e.target.value)}
+              className="w-full bg-[#060f1e] border border-[#1e293b] rounded-lg px-3 py-2.5 text-sm text-[#e2e8f0] mb-3 focus:outline-none focus:border-[#06b6d4]/50"
+            >
+              <option value="">— Select Playbook —</option>
+              <option value="network-isolation">Network Isolation</option>
+              <option value="credential-reset">Credential Reset</option>
+              <option value="host-quarantine">Host Quarantine</option>
+              <option value="threat-intel-lookup">Threat Intel Lookup</option>
+              <option value="full-incident-response">Full Incident Response</option>
+            </select>
+            <button
+              onClick={handleTriggerPlaybook}
+              disabled={isPlaybookTriggering || !selectedPlaybookId}
+              className="btn-primary w-full py-2.5 text-sm font-semibold flex items-center justify-center gap-2"
+            >
+              {isPlaybookTriggering ? (
+                <Loader2 size={12} className="animate-spin" />
+              ) : (
+                <Play size={12} />
+              )}
+              ▷ Launch Playbook
+            </button>
           </div>
 
           {/* Active Playbook Execution Logs (Summary) */}
-          <div className="card-premium rounded-xl p-5">
-            <h4 className="text-sm font-semibold text-[#94a3b8] uppercase tracking-widest mb-3">
-              Automation History
-            </h4>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              {incident.playbookRuns && incident.playbookRuns.length > 0 ? (
-                incident.playbookRuns.map(run => {
-                  let runStatusColor = T.primary;
-                  
-                  if (run.status === 'SUCCESS') {
-                    runStatusColor = T.low;
-                  } else if (run.status === 'FAILED') {
-                    runStatusColor = T.critical;
-                  } else if (run.status === 'SKIPPED') {
-                    runStatusColor = T.textMuted;
-                  }
-
-                  return (
-                    <div key={run.id} style={{
-                      padding: '12px',
-                      background: T.surfaceDeep,
-                      border: `1px solid ${T.border}`,
-                      borderRadius: '8px',
-                      fontSize: 'var(--text-sm)',
-                      fontFamily: 'var(--font-display)',
-                    }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px', gap: '8px' }}>
-                        <span style={{ fontWeight: 500, color: T.text, textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', maxWidth: '140px' }}>
-                          {run.playbook?.name || 'Playbook'}
-                        </span>
-                        <span style={{
-                          fontWeight: 600,
-                          color: runStatusColor,
-                          fontSize: '11px',
-                          textTransform: 'uppercase',
-                        }}>
-                          {run.status}
-                        </span>
-                      </div>
-                      <div style={{ fontSize: 'var(--text-xs)', color: T.textMuted, fontFamily: 'var(--font-mono)' }}>
-                        run time: {new Date(run.startedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}
-                      </div>
-                    </div>
-                  );
-                })
-              ) : (
-                <p className="text-[#334155] text-sm text-center py-6 italic">
-                  No playbook runs logged.
-                </p>
-              )}
-            </div>
+          <div className="panel-card">
+            <p className="panel-card-title">Automation History</p>
+            <p className="text-[#334155] text-sm italic text-center py-4">
+              No playbook runs logged.
+            </p>
           </div>
 
         </div>

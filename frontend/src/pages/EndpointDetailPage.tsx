@@ -593,7 +593,7 @@ export default function EndpointDetailPage() {
       </div>
 
       {/* Detail Tabs Control */}
-      <div className="flex gap-0 border-b border-[#1e293b] mb-6 mt-4 overflow-x-auto">
+      <div className="flex border-b border-[#1e293b] mb-6 mt-2">
         {[
           { id: 'processes', label: 'Process Tree Monitor', icon: <Terminal size={14} /> },
           { id: 'network', label: 'Socket Connection Map', icon: <Network size={14} /> },
@@ -605,15 +605,12 @@ export default function EndpointDetailPage() {
             <button
               key={tab.id}
               onClick={() => handleTabChange(tab.id as any)}
-              className={isActive 
-                ? "flex items-center gap-2 px-5 py-3 text-sm text-[#06b6d4] font-medium cursor-pointer whitespace-nowrap border-b-2 border-[#06b6d4] bg-transparent" 
-                : "flex items-center gap-2 px-5 py-3 text-sm text-[#64748b] hover:text-[#94a3b8] transition-colors cursor-pointer whitespace-nowrap border-b-2 border-transparent hover:border-[#334155] bg-transparent"
-              }
+              className={isActive ? 'tab-active' : 'tab-inactive'}
             >
               {tab.icon}
               {tab.label}
               {tab.badge !== undefined && tab.badge > 0 && (
-                <span className="bg-[#f43f5e]/20 text-[#f43f5e] text-xs px-1.5 py-0.5 rounded-full font-mono leading-none">
+                <span className="tab-count-badge">
                   {tab.badge}
                 </span>
               )}
