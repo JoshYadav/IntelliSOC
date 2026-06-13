@@ -664,11 +664,11 @@ export default function IncidentDetailPage() {
         </div>
         
         {/* Right Column (Control Panel & Actions) */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', minWidth: 0 }}>
+        <div className="flex flex-col gap-4">
           
           {/* Analyst Note Quick Form */}
-          <div className="card-premium rounded-xl p-5 mb-4">
-            <h4 style={{ fontSize: 'var(--text-sm)', fontWeight: 600, fontFamily: 'var(--font-display)', marginBottom: '12px', color: T.text }}>
+          <div className="card-premium rounded-xl p-5">
+            <h4 className="text-sm font-semibold text-[#94a3b8] uppercase tracking-widest mb-3">
               Append analyst note
             </h4>
             <form onSubmit={handleSubmitNote}>
@@ -677,13 +677,12 @@ export default function IncidentDetailPage() {
                 value={noteContent}
                 onChange={(e) => setNoteContent(e.target.value)}
                 disabled={isNoteSubmitting}
-                className="w-full bg-[#0a1628] border border-[#06b6d4]/20 rounded-lg p-3 text-sm text-[#e2e8f0] placeholder-[#475569] focus:outline-none focus:border-[#06b6d4]/60 resize-none min-h-[100px] mb-3"
+                className="w-full bg-[#060f1e] border border-[#1e293b] rounded-lg p-3 text-sm text-[#e2e8f0] placeholder-[#334155] focus:outline-none focus:border-[#06b6d4]/50 resize-none h-24 block"
               />
               <button
                 type="submit"
-                className="btn-secondary w-full"
+                className="mt-3 btn-secondary text-xs px-4 py-2 flex items-center gap-2"
                 disabled={isNoteSubmitting || !noteContent.trim()}
-                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
               >
                 {isNoteSubmitting ? <Loader2 size={12} className="animate-spin" /> : <Send size={12} />}
                 Append Note
@@ -692,30 +691,24 @@ export default function IncidentDetailPage() {
           </div>
 
           {/* Trigger Playbook console */}
-          <div className="card-premium rounded-xl p-5 mb-4">
-            <h4 style={{ fontSize: 'var(--text-sm)', fontWeight: 600, fontFamily: 'var(--font-display)', marginBottom: '12px', color: T.text }}>
+          <div className="card-premium rounded-xl p-5">
+            <h4 className="text-sm font-semibold text-[#94a3b8] uppercase tracking-widest mb-3">
               SOAR Orchestration
             </h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <select
                 value={selectedPlaybookId}
                 onChange={(e) => setSelectedPlaybookId(e.target.value)}
-                className="op-select"
-                style={{ width: '100%', fontSize: 'var(--text-sm)', height: '36px', borderRadius: '6px' }}
+                className="w-full bg-[#060f1e] border border-[#1e293b] rounded-lg px-3 py-2.5 text-sm text-[#e2e8f0] focus:outline-none focus:border-[#06b6d4]/50 mb-3"
               >
                 <option value="">-- Select Playbook --</option>
-                <option value="network-isolation">Network Isolation</option>
-                <option value="credential-reset">Credential Reset</option>
-                <option value="host-quarantine">Host Quarantine</option>
-                <option value="threat-intel-lookup">Threat Intel Lookup</option>
-                <option value="full-incident-response">Full Incident Response</option>
                 {playbooks.map(pb => (
                   <option key={pb.id} value={pb.id}>{pb.name}</option>
                 ))}
               </select>
               
               <button
-                className="btn-primary"
+                className="w-full btn-primary py-2.5 text-sm font-semibold flex items-center justify-center gap-2"
                 onClick={handleTriggerPlaybook}
                 disabled={isPlaybookTriggering || !selectedPlaybookId}
               >
@@ -730,8 +723,8 @@ export default function IncidentDetailPage() {
           </div>
 
           {/* Active Playbook Execution Logs (Summary) */}
-          <div className="card-premium rounded-xl p-5 mb-4">
-            <h4 style={{ fontSize: 'var(--text-sm)', fontWeight: 600, fontFamily: 'var(--font-display)', marginBottom: '12px', color: T.text }}>
+          <div className="card-premium rounded-xl p-5">
+            <h4 className="text-sm font-semibold text-[#94a3b8] uppercase tracking-widest mb-3">
               Automation History
             </h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -776,7 +769,7 @@ export default function IncidentDetailPage() {
                   );
                 })
               ) : (
-                <p className="text-[#475569] text-sm italic py-4 text-center">
+                <p className="text-[#334155] text-sm text-center py-6 italic">
                   No playbook runs logged.
                 </p>
               )}

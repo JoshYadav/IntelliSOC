@@ -230,12 +230,12 @@ export default function PlaybooksPage() {
           <p style={{ fontFamily: 'var(--font-display)', fontSize: '14px' }}>Loading runbooks...</p>
         </div>
       ) : playbooks.length === 0 ? (
-        <div className="card-premium rounded-xl p-16 flex flex-col items-center justify-center text-center">
-          <div className="w-16 h-16 rounded-full bg-[#06b6d4]/10 flex items-center justify-center mb-5 opacity-40">
-            <BookOpen size={32} className="text-[#06b6d4]" />
+        <div className="card-premium rounded-xl p-16 flex flex-col items-center justify-center text-center min-h-[200px] mt-4">
+          <div className="w-16 h-16 rounded-full bg-[#06b6d4]/10 border border-[#06b6d4]/20 flex items-center justify-center mb-5">
+            <BookOpen size={28} className="text-[#06b6d4] opacity-50" />
           </div>
-          <p className="text-[#475569] text-sm font-medium">No playbooks configured</p>
-          <p className="text-[#334155] text-xs mt-1">Upload a playbook or define automation workflows to get started.</p>
+          <p className="text-[#64748b] text-sm font-semibold mt-0">No playbooks configured</p>
+          <p className="text-[#334155] text-xs mt-1.5 max-w-xs">Upload a playbook or define automation workflows to get started.</p>
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
