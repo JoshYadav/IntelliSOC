@@ -117,25 +117,25 @@ export default function KillChainTimeline({ alerts }: KillChainTimelineProps) {
     (a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
   );
 
-  const getBorderColor = (tactic: string): string => {
-    if (!tactic) return 'border-l-[#06b6d4]';
-    if (tactic.includes('Lateral')) return 'border-l-[#3b82f6]';
-    if (tactic.includes('Privilege')) return 'border-l-[#f43f5e]';
-    if (tactic.includes('Persistence')) return 'border-l-[#f97316]';
-    if (tactic.includes('Execution')) return 'border-l-[#a855f7]';
-    if (tactic.includes('Defense')) return 'border-l-[#eab308]';
-    if (tactic.includes('Command')) return 'border-l-[#06b6d4]';
-    return 'border-l-[#06b6d4]';
+  const getCardBorderColor = (tactic: string): string => {
+    if (!tactic) return '#06b6d4';
+    if (tactic.includes('Lateral')) return '#3b82f6';
+    if (tactic.includes('Privilege')) return '#f43f5e';
+    if (tactic.includes('Persistence')) return '#f97316';
+    if (tactic.includes('Execution')) return '#a855f7';
+    if (tactic.includes('Defense')) return '#eab308';
+    if (tactic.includes('Command')) return '#06b6d4';
+    return '#06b6d4';
   };
 
-  const getTacticColor = (tactic: string): string => {
-    if (!tactic) return 'text-[#06b6d4]';
-    if (tactic.includes('Lateral')) return 'text-[#3b82f6]';
-    if (tactic.includes('Privilege')) return 'text-[#f43f5e]';
-    if (tactic.includes('Persistence')) return 'text-[#f97316]';
-    if (tactic.includes('Execution')) return 'text-[#a855f7]';
-    if (tactic.includes('Defense')) return 'text-[#eab308]';
-    return 'text-[#06b6d4]';
+  const getTacticTextColor = (tactic: string): string => {
+    if (!tactic) return '#06b6d4';
+    if (tactic.includes('Lateral')) return '#3b82f6';
+    if (tactic.includes('Privilege')) return '#f43f5e';
+    if (tactic.includes('Persistence')) return '#f97316';
+    if (tactic.includes('Execution')) return '#a855f7';
+    if (tactic.includes('Defense')) return '#eab308';
+    return '#06b6d4';
   };
 
   return (
@@ -251,41 +251,50 @@ export default function KillChainTimeline({ alerts }: KillChainTimelineProps) {
             const timestamp = new Date(alert.timestamp);
             const timeStr = timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
             const dateStr = timestamp.toLocaleDateString();
-            const sevColor = getSeverityColor(alert.severity);
 
             return (
-              <div 
+              <div
                 key={alert.id}
-                className={`killchain-card border-l-4 ${getBorderColor(phase.name)}`}
+                style={{
+                  background: 'linear-gradient(135deg, #0d1526 0%, #0a1020 100%)',
+                  border: '1px solid rgba(6,182,212,0.12)',
+                  borderLeft: `4px solid ${getCardBorderColor(phase.name)}`,
+                  borderRadius: '8px',
+                  padding: '14px 16px',
+                  marginBottom: '10px',
+                  overflow: 'hidden'
+                }}
               >
-                <div className="flex justify-between items-start mb-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-semibold text-[#e2e8f0] capitalize">
+                <div style={{ display: 'flex', justifyContent: 'space-between', 
+                              alignItems: 'flex-start', marginBottom: '6px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ fontSize: '13px', fontWeight: '600', 
+                                   color: '#e2e8f0', textTransform: 'capitalize' }}>
                       {alert.type.replace(/_/g, ' ').toLowerCase()}
                     </span>
-                    <span className={`text-xs font-medium ${getTacticColor(phase.name)}`}>
+                    <span style={{ fontSize: '11px', fontWeight: '500',
+                                   color: getTacticTextColor(phase.name) }}>
                       {phase.name}
                     </span>
                   </div>
-                  <div className="text-right shrink-0 ml-4">
-                    <span className="text-xs text-[#475569]">{dateStr} • {timeStr}</span>
-                    <div className="text-xs font-mono text-[#f97316] font-semibold mt-0.5">
+                  <div style={{ textAlign: 'right', flexShrink: 0, marginLeft: '12px' }}>
+                    <span style={{ fontSize: '11px', color: '#475569' }}>
+                      {dateStr} • {timeStr}
+                    </span>
+                    <div style={{ fontSize: '11px', fontFamily: 'monospace', 
+                                  color: '#f97316', fontWeight: '600', marginTop: '2px' }}>
                       Risk: {alert.riskScore}/100
                     </div>
                   </div>
                 </div>
-                <p 
-                  className="text-xs text-[#94a3b8] mt-1.5 leading-relaxed break-all"
-                  style={{ overflowWrap: 'anywhere', wordBreak: 'break-all' }}
-                >
+                <p style={{ fontSize: '12px', color: '#94a3b8', lineHeight: '1.6',
+                            wordBreak: 'break-all', overflowWrap: 'anywhere' }}>
                   {alert.explanation || 'Suspicious network action detected.'}
                 </p>
                 {alert.ip && (
-                  <p 
-                    className="text-xs font-mono text-[#475569] mt-2"
-                    style={{ overflowWrap: 'anywhere' }}
-                  >
-                    src_ip: <span className="text-[#06b6d4]">{alert.ip}</span>
+                  <p style={{ fontSize: '11px', fontFamily: 'monospace', 
+                              color: '#475569', marginTop: '8px' }}>
+                    src_ip: <span style={{ color: '#06b6d4' }}>{alert.ip}</span>
                   </p>
                 )}
               </div>

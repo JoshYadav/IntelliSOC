@@ -170,6 +170,14 @@ export default function PlaybooksPage() {
     }
   };
 
+  const getPlaybookBorder = (trigger: string): string => {
+    if (trigger?.includes('CONTAINMENT')) return '#f97316';
+    if (trigger?.includes('INVESTIGATION')) return '#06b6d4';
+    if (trigger?.includes('REMEDIATION')) return '#3b82f6';
+    if (trigger?.includes('FULL')) return '#f43f5e';
+    return '#06b6d4';
+  };
+
   return (
     <div className="animate-fade-in-up" style={{ maxWidth: '1200px', margin: '0 auto' }}>
       
@@ -252,34 +260,27 @@ export default function PlaybooksPage() {
             return (
               <div
                 key={pb.id}
-                className="card-premium"
                 style={{
-                  padding: '20px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '12px',
-                  animation: 'fadeUp 0.4s ease both',
-                  animationDelay: `${idx * 40}ms`,
-                  transition: 'border-color 0.15s ease',
+                  background: 'linear-gradient(135deg, #0d1526 0%, #0a1020 100%)',
+                  border: '1px solid rgba(6,182,212,0.12)',
+                  borderLeft: `4px solid ${getPlaybookBorder(pb.trigger)}`,
+                  borderRadius: '10px',
+                  padding: '18px 20px',
+                  marginBottom: '12px',
+                  transition: 'border-color 0.2s'
                 }}
-                onMouseEnter={e => e.currentTarget.style.borderColor = T.borderHover}
-                onMouseLeave={e => e.currentTarget.style.borderColor = T.border}
               >
                 {/* Top Row: Playbook Name + Trigger Badge + Enabled Toggle */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <span style={{
-                      fontFamily: 'var(--font-display)',
-                      fontSize: '16px',
-                      fontWeight: 600,
-                      color: T.text,
-                    }}>
+                    <span style={{ fontSize: '15px', fontWeight: '700', color: '#e2e8f0' }}>
                       {pb.name}
                     </span>
-                    <span className="badge" style={{
-                      background: T.primaryDim,
-                      color: T.primary,
-                      borderColor: T.primary,
+                    <span style={{ 
+                      fontSize: '10px', fontWeight: '600', 
+                      color: getPlaybookBorder(pb.trigger),
+                      background: `${getPlaybookBorder(pb.trigger)}18`,
+                      padding: '2px 8px', borderRadius: '4px', marginLeft: '8px'
                     }}>
                       ON {pb.trigger}
                     </span>
@@ -304,13 +305,7 @@ export default function PlaybooksPage() {
                 </div>
 
                 {/* Second Row: Description */}
-                <p style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: '14px',
-                  color: T.textSecondary,
-                  lineHeight: 1.6,
-                  margin: 0
-                }}>
+                <p style={{ fontSize: '13px', color: '#64748b', marginTop: '6px' }}>
                   {pb.description || 'No blueprint description provided.'}
                 </p>
 

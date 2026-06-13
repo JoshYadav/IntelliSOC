@@ -305,19 +305,11 @@ export default function DashboardPage() {
           border: `1px solid ${T.border}`,
         }}>
           <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-            <span className="badge" style={{
-              background: T.primaryDim,
-              border: `1px solid ${T.primary}`,
-              color: T.primary,
-            }}>
+            <span className="text-xs px-2.5 py-1 rounded-full bg-[#06b6d4]/10 text-[#06b6d4] font-mono border border-[#06b6d4]/30">
               session completed
             </span>
             {logFormat !== 'UNKNOWN' && (
-              <span className="badge" style={{
-                background: T.primaryDim,
-                border: `1px solid ${T.primary}`,
-                color: T.primary,
-              }}>
+              <span className="text-xs px-2.5 py-1 rounded-full bg-[#a855f7]/10 text-[#a855f7] font-mono border border-[#a855f7]/30">
                 {logFormat.replace(/_/g, ' ')}
               </span>
             )}
