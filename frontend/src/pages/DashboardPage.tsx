@@ -305,11 +305,39 @@ export default function DashboardPage() {
           border: `1px solid ${T.border}`,
         }}>
           <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-            <span className="text-xs px-2.5 py-1 rounded-full bg-[#06b6d4]/10 text-[#06b6d4] font-mono border border-[#06b6d4]/30">
+            <span style={{
+              fontSize: '12px',
+              fontWeight: 600,
+              padding: '4px 12px',
+              borderRadius: '9999px',
+              backgroundColor: 'rgba(6, 182, 212, 0.1)',
+              color: '#06b6d4',
+              fontFamily: 'var(--font-mono, monospace)',
+              border: '1px solid rgba(6, 182, 212, 0.3)',
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
               session completed
             </span>
             {logFormat !== 'UNKNOWN' && (
-              <span className="text-xs px-2.5 py-1 rounded-full bg-[#a855f7]/10 text-[#a855f7] font-mono border border-[#a855f7]/30">
+              <span style={{
+                fontSize: '12px',
+                fontWeight: 600,
+                padding: '4px 12px',
+                borderRadius: '9999px',
+                backgroundColor: 'rgba(168, 85, 247, 0.1)',
+                color: '#a855f7',
+                fontFamily: 'var(--font-mono, monospace)',
+                border: '1px solid rgba(168, 85, 247, 0.3)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
                 {logFormat.replace(/_/g, ' ')}
               </span>
             )}
