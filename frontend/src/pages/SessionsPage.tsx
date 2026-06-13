@@ -229,7 +229,21 @@ export default function SessionsPage() {
 
                 {/* Format pill */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-                  <span className="badge" style={{ background: T.primaryDim, color: T.primary, borderColor: T.primary }}>
+                  <span style={{
+                    fontSize: '12px',
+                    fontWeight: 600,
+                    padding: '4px 10px',
+                    borderRadius: '6px',
+                    backgroundColor: 'rgba(129, 140, 248, 0.15)',
+                    color: '#818cf8',
+                    fontFamily: 'var(--font-mono, monospace)',
+                    border: '1px solid rgba(129, 140, 248, 0.3)',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
                     {session.logFormat.replace(/_/g, ' ')}
                   </span>
 
