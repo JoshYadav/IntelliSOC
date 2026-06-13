@@ -33,6 +33,10 @@ app.use((req: import('express').Request, res: import('express').Response, next: 
   next();
 });
 
+app.get('/health', (_req, res) => {
+  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 // ── Rate limiting ─────────────────────────────────────────────────────────────
 // General API limit: 200 requests per 15 minutes per IP
 const generalLimiter = rateLimit({
@@ -84,17 +88,14 @@ app.use((err: any, _req: express.Request, res: express.Response, _next: express.
 });
 
 app.listen(PORT, () => {
-  console.log(`🚀 IntelliSOC server running on http://localhost:${PORT}`);
-  console.log(`🔒 CORS allowed origins: ${process.env.ALLOWED_ORIGINS || '*'}`);
+  console.log(`[server] Running on port ${PORT}`);
+  console.log(`[server] Environment: ${process.env.NODE_ENV || 'development'}`);
 
-  // EDR: Periodically mark stale endpoints (every 60 seconds)
-  setInterval(async () => {
-    try {
-      await markStaleEndpoints();
-    } catch (err: any) {
-      console.error('[EDR] Stale endpoints check failed:', err.message);
-    }
-  }, 60 * 1000);
+  try {
+    markStaleEndpoints();
+  } catch (err) {
+    console.error('[server] markStaleEndpoints failed:', err);
+  }
 });
 
 export default app;
