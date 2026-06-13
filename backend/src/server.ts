@@ -1,5 +1,5 @@
 import express from 'express';
-import cors from 'cors';
+
 import rateLimit from 'express-rate-limit';
 import path from 'path';
 import { logRoutes } from './routes/logRoutes';
@@ -14,28 +14,24 @@ import { markStaleEndpoints } from './services/endpointService';
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors({
-  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-    // Allow requests with no origin (Render health checks, Postman, etc.)
-    if (!origin) return callback(null, true);
-    
-    // Allow any vercel.app subdomain (covers preview + production deployments)
-    if (origin.endsWith('.vercel.app')) return callback(null, true);
-    
-    // Allow localhost for development
-    if (origin.startsWith('http://localhost')) return callback(null, true);
-    
-    // Block everything else
-    callback(new Error('Not allowed by CORS'));
-  },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  credentials: true,
-  optionsSuccessStatus: 200
-}));
-
-// Handle preflight for ALL routes
-app.options('*', cors());
+app.use((req: import('express').Request, res: import('express').Response, next: import('express').NextFunction) => {
+  const origin = req.headers.origin as string | undefined;
+  
+  if (!origin || origin.endsWith('.vercel.app') || origin.startsWith('http://localhost')) {
+    res.setHeader('Access-Control-Allow-Origin', origin || '*');
+  }
+  
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+  
+  next();
+});
 
 // ── Rate limiting ─────────────────────────────────────────────────────────────
 // General API limit: 200 requests per 15 minutes per IP
