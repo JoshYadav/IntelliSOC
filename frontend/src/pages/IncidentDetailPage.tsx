@@ -289,14 +289,37 @@ export default function IncidentDetailPage() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1.5rem' }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-              <span className="badge" style={{
-                borderColor: (priorityColors[incident.priority] || priorityColors.LOW).border,
-                color: (priorityColors[incident.priority] || priorityColors.LOW).text,
+              <span style={{
                 background: (priorityColors[incident.priority] || priorityColors.LOW).bg,
+                color: (priorityColors[incident.priority] || priorityColors.LOW).text,
+                border: `1px solid ${(priorityColors[incident.priority] || priorityColors.LOW).border}`,
+                padding: '4px 10px',
+                borderRadius: '6px',
+                fontSize: '12px',
+                fontWeight: 600,
+                letterSpacing: '0.05em',
+                textTransform: 'uppercase',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontFamily: 'var(--font-mono, monospace)'
               }}>
                 {incident.priority}
               </span>
-              <span style={{ fontSize: 'var(--text-xs)', color: T.textSecondary, fontFamily: 'var(--font-mono)' }}>
+              <span style={{
+                fontSize: '12px',
+                fontWeight: 600,
+                padding: '4px 10px',
+                borderRadius: '6px',
+                backgroundColor: 'rgba(148, 163, 184, 0.1)',
+                color: '#94a3b8',
+                fontFamily: 'var(--font-mono, monospace)',
+                border: '1px solid rgba(148, 163, 184, 0.2)',
+                letterSpacing: '0.05em',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
                 incident-id: {incident.id}
               </span>
             </div>

@@ -84,10 +84,21 @@ export default function AlertsTable({ alerts }: AlertsTableProps) {
                 >
                   {/* Type Badge */}
                   <td>
-                    <span className="badge" style={{
-                      background: 'rgba(129, 140, 248, 0.08)',
-                      color: T.primary,
-                      border: `1px solid rgba(129, 140, 248, 0.2)`
+                    <span style={{
+                      fontSize: '11px',
+                      fontWeight: 600,
+                      padding: '4px 10px',
+                      borderRadius: '6px',
+                      backgroundColor: 'rgba(129, 140, 248, 0.1)',
+                      color: '#818cf8',
+                      fontFamily: 'var(--font-mono, monospace)',
+                      border: '1px solid rgba(129, 140, 248, 0.25)',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      whiteSpace: 'nowrap'
                     }}>
                       {alert.type.replace(/_/g, ' ')}
                     </span>

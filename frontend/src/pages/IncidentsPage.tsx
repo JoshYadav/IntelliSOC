@@ -331,10 +331,20 @@ export default function IncidentsPage() {
                 {/* Right side data items */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
                   {/* Priority Badge */}
-                  <span className="badge" style={{
-                    background: `${prioColor}12`,
+                  <span style={{
+                    background: `${prioColor}15`,
                     color: prioColor,
-                    borderColor: `${prioColor}40`
+                    border: `1px solid ${prioColor}40`,
+                    padding: '4px 10px',
+                    borderRadius: '6px',
+                    fontSize: '12px',
+                    fontWeight: 600,
+                    letterSpacing: '0.05em',
+                    textTransform: 'uppercase',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontFamily: 'var(--font-mono, monospace)'
                   }}>
                     {incident.priority}
                   </span>
