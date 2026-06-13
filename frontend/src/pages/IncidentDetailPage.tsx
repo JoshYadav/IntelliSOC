@@ -668,26 +668,34 @@ export default function IncidentDetailPage() {
           
           {/* Analyst Note Quick Form */}
           <div className="panel-card">
-            <p className="panel-card-title">Append Analyst Note</p>
-            <form onSubmit={handleSubmitNote}>
-              <div className="flex flex-col gap-3 w-full">
-                <textarea
-                  placeholder="Log observations, escalation instructions..."
-                  value={noteContent}
-                  onChange={(e) => setNoteContent(e.target.value)}
-                  disabled={isNoteSubmitting}
-                  className="w-full bg-[#060f1e] border border-[#1e293b] rounded-lg p-3 text-sm text-[#e2e8f0] placeholder-[#334155] resize-none h-28 block w-full focus:outline-none focus:border-[#06b6d4]/50"
-                />
-                <button
-                  type="submit"
-                  disabled={isNoteSubmitting || !noteContent.trim()}
-                  className="btn-secondary text-xs px-4 py-2 w-full"
-                >
-                  {isNoteSubmitting ? <Loader2 size={12} className="animate-spin" /> : <Send size={12} />}
-                  Append Note
-                </button>
-              </div>
-            </form>
+            <p className="panel-card-title">APPEND ANALYST NOTE</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}>
+              <textarea
+                value={noteContent}
+                onChange={(e) => setNoteContent(e.target.value)}
+                placeholder="Log observations, escalation instructions..."
+                style={{
+                  width: '100%',
+                  height: '100px',
+                  background: '#060f1e',
+                  border: '1px solid #1e293b',
+                  borderRadius: '8px',
+                  padding: '12px',
+                  color: '#e2e8f0',
+                  fontSize: '14px',
+                  resize: 'vertical',
+                  outline: 'none',
+                  boxSizing: 'border-box'
+                }}
+              />
+              <button
+                onClick={(e: any) => handleSubmitNote(e)}
+                className="btn-secondary"
+                style={{ width: '100%', padding: '8px', fontSize: '13px' }}
+              >
+                ✦ Append Note
+              </button>
+            </div>
           </div>
 
           {/* Trigger Playbook console */}
