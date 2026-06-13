@@ -274,11 +274,17 @@ export default function KillChainTimeline({ alerts }: KillChainTimelineProps) {
                     </div>
                   </div>
                 </div>
-                <p className="text-xs text-[#94a3b8] leading-relaxed mt-1">
+                <p 
+                  className="text-xs text-[#94a3b8] mt-1.5 leading-relaxed break-all"
+                  style={{ overflowWrap: 'anywhere', wordBreak: 'break-all' }}
+                >
                   {alert.explanation || 'Suspicious network action detected.'}
                 </p>
                 {alert.ip && (
-                  <p className="text-xs font-mono text-[#475569] mt-2">
+                  <p 
+                    className="text-xs font-mono text-[#475569] mt-2"
+                    style={{ overflowWrap: 'anywhere' }}
+                  >
                     src_ip: <span className="text-[#06b6d4]">{alert.ip}</span>
                   </p>
                 )}

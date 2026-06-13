@@ -670,18 +670,18 @@ export default function IncidentDetailPage() {
           <div className="panel-card">
             <p className="panel-card-title">Append Analyst Note</p>
             <form onSubmit={handleSubmitNote}>
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-3 w-full">
                 <textarea
                   placeholder="Log observations, escalation instructions..."
                   value={noteContent}
                   onChange={(e) => setNoteContent(e.target.value)}
                   disabled={isNoteSubmitting}
-                  className="w-full bg-[#060f1e] border border-[#1e293b] rounded-lg p-3 text-sm text-[#e2e8f0] placeholder-[#334155] resize-none h-24 focus:outline-none focus:border-[#06b6d4]/50"
+                  className="w-full bg-[#060f1e] border border-[#1e293b] rounded-lg p-3 text-sm text-[#e2e8f0] placeholder-[#334155] resize-none h-28 block w-full focus:outline-none focus:border-[#06b6d4]/50"
                 />
                 <button
                   type="submit"
                   disabled={isNoteSubmitting || !noteContent.trim()}
-                  className="btn-secondary text-xs px-4 py-2 w-full flex items-center justify-center gap-2"
+                  className="btn-secondary text-xs px-4 py-2 w-full"
                 >
                   {isNoteSubmitting ? <Loader2 size={12} className="animate-spin" /> : <Send size={12} />}
                   Append Note
@@ -698,17 +698,12 @@ export default function IncidentDetailPage() {
               onChange={(e) => setSelectedPlaybookId(e.target.value)}
               className="w-full bg-[#060f1e] border border-[#1e293b] rounded-lg px-3 py-2.5 text-sm text-[#e2e8f0] mb-3 focus:outline-none focus:border-[#06b6d4]/50"
             >
-              <option value="">— Select Playbook —</option>
-              <option value="network-isolation">Network Isolation</option>
-              <option value="credential-reset">Credential Reset</option>
-              <option value="host-quarantine">Host Quarantine</option>
-              <option value="threat-intel-lookup">Threat Intel Lookup</option>
-              <option value="full-incident-response">Full Incident Response</option>
+              <option value="">— No playbooks configured —</option>
             </select>
             <button
               onClick={handleTriggerPlaybook}
-              disabled={isPlaybookTriggering || !selectedPlaybookId}
-              className="btn-primary w-full py-2.5 text-sm font-semibold flex items-center justify-center gap-2"
+              disabled={true}
+              className="w-full py-2.5 text-sm font-semibold flex items-center justify-center gap-2 opacity-40 cursor-not-allowed bg-gradient-to-r from-[#06b6d4] to-[#3b82f6] text-white rounded-lg"
             >
               {isPlaybookTriggering ? (
                 <Loader2 size={12} className="animate-spin" />
