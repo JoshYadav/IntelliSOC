@@ -250,7 +250,7 @@ export default function GeoIPMap({ attackers: _attackers, socCore, alerts = [], 
 
     for (const alert of alerts) {
       if (!alert.ip) continue;
-      if (alert.country?.toUpperCase() === 'US') continue;
+      if (alert.country?.toUpperCase() === 'IN') continue;
 
       const ip = alert.ip;
       if (!ipMap[ip]) {
@@ -290,7 +290,7 @@ export default function GeoIPMap({ attackers: _attackers, socCore, alerts = [], 
     const counts: Record<string, { count: number; maxScore: number }> = {};
     for (const alert of alerts) {
       const cc = alert.country?.toUpperCase();
-      if (!cc || cc === 'US') continue;
+      if (!cc || cc === 'IN') continue;
       if (!counts[cc]) {
         counts[cc] = { count: 0, maxScore: 0 };
       }

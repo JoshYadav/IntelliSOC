@@ -611,7 +611,7 @@ export default function DashboardPage() {
           }}>
             <GeoIPMap
               attackers={attackers}
-              socCore={{ lat: 37, lng: -95 }}
+              socCore={{ lat: 19.076, lng: 72.8777 }}
               alerts={alerts}
               logsProcessed={logsProcessed}
             />

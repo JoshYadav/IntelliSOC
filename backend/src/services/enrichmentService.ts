@@ -71,7 +71,13 @@ const DEMO_IPS: Record<string, IPEnrichment> = {
   '185.220.101.34':{ reputation: 'SUSPICIOUS', abuseScore: 60, country: 'DE', isp: 'Tor Exit Node', latitude: 52.5200, longitude: 13.4050 },
   '198.51.100.22': { reputation: 'MALICIOUS', abuseScore: 90, country: 'RU', isp: 'RU Server', latitude: 55.7558, longitude: 37.6173 },
   '203.0.113.88':  { reputation: 'MALICIOUS', abuseScore: 80, country: 'CN', isp: 'CN Network', latitude: 39.9042, longitude: 116.4074 },
-  '185.20.10.99':  { reputation: 'SUSPICIOUS', abuseScore: 70, country: 'DE', isp: 'DE Node', latitude: 52.5200, longitude: 13.4050 },
+  // South Africa attacker IPs (Johannesburg)
+  '185.20.10.99':  { reputation: 'MALICIOUS', abuseScore: 85, country: 'ZA', isp: 'ZA Hosting', latitude: -26.2041, longitude: 28.0473 },
+  '197.234.240.10':{ reputation: 'MALICIOUS', abuseScore: 85, country: 'ZA', isp: 'Internet Solutions ZA', latitude: -26.2041, longitude: 28.0473 },
+  '197.214.1.10':  { reputation: 'MALICIOUS', abuseScore: 85, country: 'ZA', isp: 'Telkom SA', latitude: -26.2041, longitude: 28.0473 },
+  '103.21.244.50': { reputation: 'MALICIOUS', abuseScore: 80, country: 'ZA', isp: 'ZA Cloud', latitude: -26.2041, longitude: 28.0473 },
+  // India victim IP (Mumbai)
+  '14.139.60.50':  { reputation: 'UNKNOWN', abuseScore: 0, country: 'IN', isp: 'NKN India', latitude: 19.0760, longitude: 72.8777 },
 };
 
 async function lookupIP(ip: string): Promise<IPEnrichment> {
